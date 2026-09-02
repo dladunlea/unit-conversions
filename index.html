@@ -1,0 +1,1495 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <title>Unit Conversion Drag & Drop</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 30px 0;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            padding: 20px;
+            max-height: calc(100vh - 60px);
+            overflow: hidden;
+        }
+
+        .difficulty-selector {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .top-section {
+            display: flex;
+            gap: 20px;
+            align-items: stretch;
+            flex-shrink: 0;
+        }
+
+        .question-display {
+            flex: 1;
+            min-width: 200px;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            font-size: clamp(16px, 2.5vw, 24px);
+            font-weight: bold;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .control-panel {
+            display: flex;
+            flex-shrink: 0;
+        }
+
+        .work-area {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 12px;
+            border: 3px dashed #dee2e6;
+            min-height: 150px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            position: relative;
+            flex: 1;
+            overflow-y: auto;
+            max-height: 100%;
+        }
+
+        .equation-line {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            font-size: clamp(14px, 2vw, 20px);
+            font-weight: 600;
+        }
+
+        .stacked-fraction {
+            display: inline-flex;
+            flex-direction: column;
+            align-items: center;
+            vertical-align: middle;
+        }
+
+        .stacked-numerator {
+            padding: 4px 8px;
+        }
+
+        .stacked-line {
+            width: 100%;
+            height: 2px;
+            background: #495057;
+            margin: 2px 0;
+        }
+
+        .stacked-denominator {
+            padding: 4px 8px;
+        }
+
+        .drop-zone {
+            min-width: 80px;
+            min-height: 60px;
+            border: 2px dashed #adb5bd;
+            border-radius: 8px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: white;
+            position: relative;
+            padding: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .drop-zone.over {
+            background: #e7f5ff;
+            border-color: #667eea;
+            transform: scale(1.05);
+        }
+
+        .drop-zone.filled {
+            border-style: solid;
+            border-color: #667eea;
+            background: #f8f9ff;
+        }
+
+        .fraction-container {
+            display: inline-flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+            padding: 8px;
+            cursor: pointer;
+            position: relative;
+            transition: transform 0.2s;
+        }
+
+        .fraction-container:hover {
+            transform: scale(1.05);
+        }
+
+        .fraction-container:hover .flip-tooltip {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .flip-tooltip {
+            position: absolute;
+            top: -35px;
+            background: #495057;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: clamp(10px, 1.5vw, 12px);
+            white-space: nowrap;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s, visibility 0.3s;
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        .flip-tooltip::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 5px solid transparent;
+            border-right: 5px solid transparent;
+            border-top: 5px solid #495057;
+        }
+
+        .fraction-part {
+            min-width: 60px;
+            padding: 6px 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 6px;
+            font-size: clamp(11px, 1.8vw, 16px);
+            font-weight: 600;
+        }
+
+        .fraction-line {
+            width: 100%;
+            height: 2px;
+            background: #495057;
+            margin: 2px 0;
+        }
+
+        .remove-btn {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            font-size: 12px;
+            cursor: pointer;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 5;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .drop-zone.filled:hover .remove-btn {
+            display: flex;
+        }
+
+        .feedback {
+            text-align: center;
+            font-size: clamp(14px, 2vw, 20px);
+            font-weight: bold;
+            padding: 15px;
+            border-radius: 10px;
+            display: none;
+        }
+
+        .feedback.correct {
+            background: #d4edda;
+            color: #155724;
+            border: 2px solid #c3e6cb;
+        }
+
+        .feedback.incorrect {
+            background: #f8d7da;
+            color: #721c24;
+            border: 2px solid #f5c6cb;
+        }
+
+        .units-bank-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 10px;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 12px;
+            flex-shrink: 0;
+            overflow: visible;
+        }
+
+        .bank-section {
+            background: white;
+            padding: 10px;
+            border-radius: 12px;
+            border: 2px solid #e9ecef;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .bank-title {
+            font-size: clamp(11px, 1.6vw, 14px);
+            font-weight: bold;
+            color: #495057;
+            margin-bottom: 6px;
+            text-align: center;
+            flex-shrink: 0;
+        }
+
+        .conversion-items {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            flex: 1;
+        }
+
+        .conversion-pair {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            padding: 6px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 6px;
+            cursor: grab;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+            color: white;
+            font-weight: 600;
+            font-size: clamp(10px, 1.2vw, 13px);
+            user-select: none;
+            justify-content: center;
+        }
+
+        .conversion-pair:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+
+        .conversion-pair:active {
+            cursor: grabbing;
+        }
+
+        .conversion-pair span {
+            white-space: nowrap;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 25px;
+            border-radius: 10px;
+            font-size: clamp(13px, 1.8vw, 16px);
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            touch-action: manipulation;
+            white-space: nowrap;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn.check-btn {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+        }
+
+        .btn.difficulty-btn {
+            background: linear-gradient(135deg, #95a5a6 0%, #7f8c8d 100%);
+            padding: 12px 20px;
+        }
+
+        .btn.difficulty-btn.active.easy {
+            background: linear-gradient(135deg, #52c234 0%, #38a169 100%);
+        }
+
+        .btn.difficulty-btn.active.medium {
+            background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
+        }
+
+        .btn.difficulty-btn.active.hard {
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+        }
+
+        .fireworks {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 9999;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1024px) and (min-width: 768px) {
+            body {
+                padding: 25px 0;
+            }
+            
+            .container {
+                max-height: calc(100vh - 50px);
+                gap: 15px;
+                padding: 15px;
+            }
+
+            .units-bank-container {
+                grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+                gap: 8px;
+            }
+
+            .work-area {
+                padding: 20px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 25px 0;
+            }
+
+            .container {
+                max-height: calc(100vh - 50px);
+                gap: 12px;
+                padding: 12px;
+            }
+
+            .top-section {
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            .control-panel {
+                width: 100%;
+                justify-content: stretch;
+            }
+
+            .btn.check-btn {
+                width: 100%;
+            }
+
+            .units-bank-container {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 8px;
+            }
+
+            .work-area {
+                padding: 15px;
+                min-height: 120px;
+            }
+
+            .difficulty-selector {
+                gap: 8px;
+            }
+
+            .btn.difficulty-btn {
+                flex: 1;
+                padding: 10px 15px;
+            }
+        }
+
+        @media (max-width: 900px) and (orientation: landscape) {
+            body {
+                padding: 15px 0;
+            }
+
+            .container {
+                max-height: calc(100vh - 30px);
+                gap: 8px;
+                padding: 10px;
+            }
+
+            .work-area {
+                padding: 12px;
+                min-height: 100px;
+            }
+
+            .units-bank-container {
+                grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            }
+        }
+
+        @media (max-height: 700px) {
+            body {
+                padding: 20px 0;
+            }
+
+            .container {
+                max-height: calc(100vh - 40px);
+                padding: 10px;
+                gap: 10px;
+            }
+
+            .question-display {
+                padding: 15px;
+            }
+
+            .work-area {
+                padding: 15px;
+                min-height: 100px;
+            }
+
+            .btn {
+                padding: 12px 20px;
+            }
+
+            .btn.difficulty-btn {
+                padding: 10px 15px;
+            }
+        }
+
+        @media (max-height: 600px) and (orientation: landscape) {
+            body {
+                padding: 10px 0;
+            }
+
+            .container {
+                max-height: calc(100vh - 20px);
+                padding: 8px;
+                gap: 8px;
+            }
+
+            .btn {
+                padding: 8px 15px;
+            }
+
+            .btn.difficulty-btn {
+                padding: 8px 12px;
+            }
+
+            .question-display {
+                padding: 10px;
+            }
+
+            .work-area {
+                padding: 10px;
+                min-height: 80px;
+            }
+
+            .bank-section {
+                padding: 6px;
+            }
+
+            .conversion-pair {
+                padding: 4px;
+            }
+
+            .difficulty-selector {
+                gap: 5px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 20px 0;
+            }
+
+            .container {
+                max-height: calc(100vh - 40px);
+                padding: 10px;
+                gap: 10px;
+            }
+
+            .units-bank-container {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 6px;
+                padding: 8px;
+            }
+
+            .bank-section {
+                padding: 8px;
+            }
+
+            .conversion-pair {
+                padding: 5px;
+                gap: 3px;
+            }
+
+            .work-area {
+                padding: 12px;
+            }
+
+            .drop-zone {
+                min-width: 60px;
+                min-height: 50px;
+            }
+
+            .fraction-part {
+                min-width: 50px;
+                padding: 5px 8px;
+            }
+        }
+
+        @media (max-width: 360px) {
+            body {
+                padding: 15px 0;
+            }
+
+            .container {
+                max-height: calc(100vh - 30px);
+                padding: 8px;
+                gap: 8px;
+            }
+
+            .units-bank-container {
+                grid-template-columns: 1fr 1fr;
+                gap: 5px;
+                padding: 6px;
+            }
+
+            .bank-section {
+                padding: 6px;
+            }
+
+            .conversion-pair {
+                padding: 4px;
+                gap: 2px;
+            }
+
+            .work-area {
+                padding: 10px;
+            }
+
+            .difficulty-selector {
+                gap: 4px;
+            }
+
+            .btn.difficulty-btn {
+                padding: 8px 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="difficulty-selector">
+            <button class="btn difficulty-btn easy active" onclick="setDifficulty('easy')">🟢 Easy</button>
+            <button class="btn difficulty-btn medium" onclick="setDifficulty('medium')">🟡 Medium</button>
+            <button class="btn difficulty-btn hard" onclick="setDifficulty('hard')">🔴 Hard</button>
+        </div>
+
+        <div class="top-section">
+            <div class="question-display" id="questionDisplay">
+                Select a difficulty level to start!
+            </div>
+            <div class="control-panel">
+                <button class="btn check-btn" onclick="checkAnswer()">✓ Check Answer</button>
+            </div>
+        </div>
+
+        <div class="work-area" id="workArea">
+            <div class="equation-line" id="equationLine">
+                <!-- Equation will be built here -->
+            </div>
+            <div class="feedback" id="feedback"></div>
+        </div>
+
+        <div class="units-bank-container" id="unitsBank">
+            <!-- Will be populated dynamically -->
+        </div>
+    </div>
+
+    <canvas class="fireworks" id="fireworksCanvas"></canvas>
+    <script>
+        // Question Bank - 100 questions total
+        const questionBank = {
+            easy: [
+                // Length (10)
+                { question: "Convert 5 meters into centimeters", start: { value: 5, unit: "m" }, target: "cm", answer: 500 },
+                { question: "Convert 3 kilometers into meters", start: { value: 3, unit: "km" }, target: "m", answer: 3000 },
+                { question: "Convert 24 inches into feet", start: { value: 24, unit: "in" }, target: "ft", answer: 2 },
+                { question: "Convert 2 miles into feet", start: { value: 2, unit: "mi" }, target: "ft", answer: 10560 },
+                { question: "Convert 500 centimeters into meters", start: { value: 500, unit: "cm" }, target: "m", answer: 5 },
+                { question: "Convert 7 feet into inches", start: { value: 7, unit: "ft" }, target: "in", answer: 84 },
+                { question: "Convert 2500 meters into kilometers", start: { value: 2500, unit: "m" }, target: "km", answer: 2.5 },
+                { question: "Convert 10 yards into feet", start: { value: 10, unit: "yd" }, target: "ft", answer: 30 },
+                { question: "Convert 8 kilometers into meters", start: { value: 8, unit: "km" }, target: "m", answer: 8000 },
+                { question: "Convert 36 inches into yards", start: { value: 36, unit: "in" }, target: "yd", answer: 1 },
+                
+                // Time (10)
+                { question: "Convert 2 hours into minutes", start: { value: 2, unit: "hr" }, target: "min", answer: 120 },
+                { question: "Convert 5 minutes into seconds", start: { value: 5, unit: "min" }, target: "s", answer: 300 },
+                { question: "Convert 180 seconds into minutes", start: { value: 180, unit: "s" }, target: "min", answer: 3 },
+                { question: "Convert 3 hours into seconds", start: { value: 3, unit: "hr" }, target: "s", answer: 10800 },
+                { question: "Convert 90 minutes into hours", start: { value: 90, unit: "min" }, target: "hr", answer: 1.5 },
+                { question: "Convert 7200 seconds into hours", start: { value: 7200, unit: "s" }, target: "hr", answer: 2 },
+                { question: "Convert 4 minutes into seconds", start: { value: 4, unit: "min" }, target: "s", answer: 240 },
+                { question: "Convert 1.5 hours into minutes", start: { value: 1.5, unit: "hr" }, target: "min", answer: 90 },
+                { question: "Convert 600 seconds into minutes", start: { value: 600, unit: "s" }, target: "min", answer: 10 },
+                { question: "Convert 0.5 hours into seconds", start: { value: 0.5, unit: "hr" }, target: "s", answer: 1800 },
+                
+                // Mass (10)
+                { question: "Convert 10 kilograms into grams", start: { value: 10, unit: "kg" }, target: "g", answer: 10000 },
+                { question: "Convert 5000 grams into kilograms", start: { value: 5000, unit: "g" }, target: "kg", answer: 5 },
+                { question: "Convert 3 pounds into ounces", start: { value: 3, unit: "lb" }, target: "oz", answer: 48 },
+                { question: "Convert 32 ounces into pounds", start: { value: 32, unit: "oz" }, target: "lb", answer: 2 },
+                { question: "Convert 2.5 kilograms into grams", start: { value: 2.5, unit: "kg" }, target: "g", answer: 2500 },
+                { question: "Convert 7500 grams into kilograms", start: { value: 7500, unit: "g" }, target: "kg", answer: 7.5 },
+                { question: "Convert 5 pounds into ounces", start: { value: 5, unit: "lb" }, target: "oz", answer: 80 },
+                { question: "Convert 1 kilogram into grams", start: { value: 1, unit: "kg" }, target: "g", answer: 1000 },
+                { question: "Convert 16 ounces into pounds", start: { value: 16, unit: "oz" }, target: "lb", answer: 1 },
+                { question: "Convert 250 grams into kilograms", start: { value: 250, unit: "g" }, target: "kg", answer: 0.25 },
+                
+                // Volume (5)
+                { question: "Convert 2 liters into milliliters", start: { value: 2, unit: "L" }, target: "mL", answer: 2000 },
+                { question: "Convert 5000 milliliters into liters", start: { value: 5000, unit: "mL" }, target: "L", answer: 5 },
+                { question: "Convert 4 gallons into quarts", start: { value: 4, unit: "gal" }, target: "qt", answer: 16 },
+                { question: "Convert 8 cups into pints", start: { value: 8, unit: "cup" }, target: "pt", answer: 4 },
+                { question: "Convert 3.5 liters into milliliters", start: { value: 3.5, unit: "L" }, target: "mL", answer: 3500 }
+            ],
+            
+            medium: [
+                // Speed conversions (15)
+                { question: "Convert 20 meters per second into kilometers per hour", start: { value: 20, unit: "m/s" }, target: "km/hr", answer: 72, compound: true },
+                { question: "Convert 15 meters per second into centimeters per second", start: { value: 15, unit: "m/s" }, target: "cm/s", answer: 1500, compound: true },
+                { question: "Convert 72 kilometers per hour into meters per second", start: { value: 72, unit: "km/hr" }, target: "m/s", answer: 20, compound: true },
+                { question: "Convert 30 miles per hour into feet per second", start: { value: 30, unit: "mi/hr" }, target: "ft/s", answer: 44, compound: true },
+                { question: "Convert 100 kilometers per hour into meters per second", start: { value: 100, unit: "km/hr" }, target: "m/s", answer: 27.78, compound: true },
+                { question: "Convert 50 feet per second into miles per hour", start: { value: 50, unit: "ft/s" }, target: "mi/hr", answer: 34.09, compound: true },
+                { question: "Convert 25 meters per second into kilometers per hour", start: { value: 25, unit: "m/s" }, target: "km/hr", answer: 90, compound: true },
+                { question: "Convert 60 miles per hour into feet per second", start: { value: 60, unit: "mi/hr" }, target: "ft/s", answer: 88, compound: true },
+                { question: "Convert 10 meters per second into centimeters per second", start: { value: 10, unit: "m/s" }, target: "cm/s", answer: 1000, compound: true },
+                { question: "Convert 120 kilometers per hour into meters per second", start: { value: 120, unit: "km/hr" }, target: "m/s", answer: 33.33, compound: true },
+                { question: "Convert 45 miles per hour into kilometers per hour", start: { value: 45, unit: "mi/hr" }, target: "km/hr", answer: 72.42, compound: true },
+                { question: "Convert 5 meters per second into kilometers per hour", start: { value: 5, unit: "m/s" }, target: "km/hr", answer: 18, compound: true },
+                { question: "Convert 80 kilometers per hour into miles per hour", start: { value: 80, unit: "km/hr" }, target: "mi/hr", answer: 49.71, compound: true },
+                { question: "Convert 35 meters per second into kilometers per hour", start: { value: 35, unit: "m/s" }, target: "km/hr", answer: 126, compound: true },
+                { question: "Convert 100 feet per second into meters per second", start: { value: 100, unit: "ft/s" }, target: "m/s", answer: 30.48, compound: true },
+                
+                // Area conversions (10)
+                { question: "Convert 5 square meters into square centimeters", start: { value: 5, unit: "m^2" }, target: "cm^2", answer: 50000, squared: true },
+                { question: "Convert 2 square kilometers into square meters", start: { value: 2, unit: "km^2" }, target: "m^2", answer: 2000000, squared: true },
+                { question: "Convert 3 square feet into square inches", start: { value: 3, unit: "ft^2" }, target: "in^2", answer: 432, squared: true },
+                { question: "Convert 10000 square centimeters into square meters", start: { value: 10000, unit: "cm^2" }, target: "m^2", answer: 1, squared: true },
+                { question: "Convert 1 square yard into square feet", start: { value: 1, unit: "yd^2" }, target: "ft^2", answer: 9, squared: true },
+                { question: "Convert 4 square meters into square centimeters", start: { value: 4, unit: "m^2" }, target: "cm^2", answer: 40000, squared: true },
+                { question: "Convert 144 square inches into square feet", start: { value: 144, unit: "in^2" }, target: "ft^2", answer: 1, squared: true },
+                { question: "Convert 0.5 square kilometers into square meters", start: { value: 0.5, unit: "km^2" }, target: "m^2", answer: 500000, squared: true },
+                { question: "Convert 2 square yards into square feet", start: { value: 2, unit: "yd^2" }, target: "ft^2", answer: 18, squared: true },
+                { question: "Convert 25000 square centimeters into square meters", start: { value: 25000, unit: "cm^2" }, target: "m^2", answer: 2.5, squared: true }
+            ],
+            
+            hard: [
+                // Acceleration (10)
+                { question: "Convert 10 meters per second squared into centimeters per second squared", start: { value: 10, unit: "m/s^2" }, target: "cm/s^2", answer: 1000, compound: true, squared: true },
+                { question: "Convert 50 miles per hour squared into kilometers per hour squared", start: { value: 50, unit: "mi/hr^2" }, target: "km/hr^2", answer: 80.45, compound: true, squared: true },
+                { question: "Convert 5 feet per second squared into inches per second squared", start: { value: 5, unit: "ft/s^2" }, target: "in/s^2", answer: 60, compound: true, squared: true },
+                { question: "Convert 100 centimeters per second squared into meters per second squared", start: { value: 100, unit: "cm/s^2" }, target: "m/s^2", answer: 1, compound: true, squared: true },
+                { question: "Convert 20 meters per second squared into kilometers per hour squared", start: { value: 20, unit: "m/s^2" }, target: "km/hr^2", answer: 259200, compound: true, squared: true },
+                { question: "Convert 32 feet per second squared into meters per second squared", start: { value: 32, unit: "ft/s^2" }, target: "m/s^2", answer: 9.75, compound: true, squared: true },
+                { question: "Convert 15 meters per second squared into feet per second squared", start: { value: 15, unit: "m/s^2" }, target: "ft/s^2", answer: 49.21, compound: true, squared: true },
+                { question: "Convert 25 kilometers per hour squared into meters per second squared", start: { value: 25, unit: "km/hr^2" }, target: "m/s^2", answer: 0.0019, compound: true, squared: true },
+                { question: "Convert 8 meters per second squared into centimeters per second squared", start: { value: 8, unit: "m/s^2" }, target: "cm/s^2", answer: 800, compound: true, squared: true },
+                { question: "Convert 60 miles per hour squared into feet per second squared", start: { value: 60, unit: "mi/hr^2" }, target: "ft/s^2", answer: 0.024, compound: true, squared: true },
+                
+                // Complex multi-step (30)
+                { question: "Convert 60 miles per hour into meters per second", start: { value: 60, unit: "mi/hr" }, target: "m/s", answer: 26.82, compound: true, multiStep: true },
+                { question: "Convert 100 kilometers per hour into feet per second", start: { value: 100, unit: "km/hr" }, target: "ft/s", answer: 91.13, compound: true, multiStep: true },
+                { question: "Convert 45 meters per second into miles per hour", start: { value: 45, unit: "m/s" }, target: "mi/hr", answer: 100.66, compound: true, multiStep: true },
+                { question: "Convert 30 feet per second into kilometers per hour", start: { value: 30, unit: "ft/s" }, target: "km/hr", answer: 32.92, compound: true, multiStep: true },
+                { question: "Convert 88 feet per second into kilometers per hour", start: { value: 88, unit: "ft/s" }, target: "km/hr", answer: 96.56, compound: true, multiStep: true },
+                { question: "Convert 50 meters per second into miles per hour", start: { value: 50, unit: "m/s" }, target: "mi/hr", answer: 111.85, compound: true, multiStep: true },
+                { question: "Convert 70 miles per hour into meters per second", start: { value: 70, unit: "mi/hr" }, target: "m/s", answer: 31.29, compound: true, multiStep: true },
+                { question: "Convert 25 kilometers per hour into feet per second", start: { value: 25, unit: "km/hr" }, target: "ft/s", answer: 22.78, compound: true, multiStep: true },
+                { question: "Convert 15 meters per second into miles per hour", start: { value: 15, unit: "m/s" }, target: "mi/hr", answer: 33.55, compound: true, multiStep: true },
+                { question: "Convert 55 miles per hour into kilometers per hour", start: { value: 55, unit: "mi/hr" }, target: "km/hr", answer: 88.51, compound: true, multiStep: true },
+                { question: "Convert 200 feet per second into meters per second", start: { value: 200, unit: "ft/s" }, target: "m/s", answer: 60.96, compound: true, multiStep: true },
+                { question: "Convert 90 kilometers per hour into miles per hour", start: { value: 90, unit: "km/hr" }, target: "mi/hr", answer: 55.92, compound: true, multiStep: true },
+                { question: "Convert 40 meters per second into feet per second", start: { value: 40, unit: "m/s" }, target: "ft/s", answer: 131.23, compound: true, multiStep: true },
+                { question: "Convert 65 miles per hour into meters per second", start: { value: 65, unit: "mi/hr" }, target: "m/s", answer: 29.06, compound: true, multiStep: true },
+                { question: "Convert 150 kilometers per hour into feet per second", start: { value: 150, unit: "km/hr" }, target: "ft/s", answer: 136.7, compound: true, multiStep: true },
+                { question: "Convert 35 feet per second into meters per second", start: { value: 35, unit: "ft/s" }, target: "m/s", answer: 10.67, compound: true, multiStep: true },
+                { question: "Convert 75 miles per hour into kilometers per hour", start: { value: 75, unit: "mi/hr" }, target: "km/hr", answer: 120.7, compound: true, multiStep: true },
+                { question: "Convert 12 meters per second into feet per second", start: { value: 12, unit: "m/s" }, target: "ft/s", answer: 39.37, compound: true, multiStep: true },
+                { question: "Convert 110 kilometers per hour into miles per hour", start: { value: 110, unit: "km/hr" }, target: "mi/hr", answer: 68.35, compound: true, multiStep: true },
+                { question: "Convert 80 feet per second into kilometers per hour", start: { value: 80, unit: "ft/s" }, target: "km/hr", answer: 87.78, compound: true, multiStep: true },
+                { question: "Convert 28 meters per second into miles per hour", start: { value: 28, unit: "m/s" }, target: "mi/hr", answer: 62.63, compound: true, multiStep: true },
+                { question: "Convert 95 miles per hour into meters per second", start: { value: 95, unit: "mi/hr" }, target: "m/s", answer: 42.47, compound: true, multiStep: true },
+                { question: "Convert 130 kilometers per hour into feet per second", start: { value: 130, unit: "km/hr" }, target: "ft/s", answer: 118.47, compound: true, multiStep: true },
+                { question: "Convert 22 meters per second into miles per hour", start: { value: 22, unit: "m/s" }, target: "mi/hr", answer: 49.21, compound: true, multiStep: true },
+                { question: "Convert 85 miles per hour into kilometers per hour", start: { value: 85, unit: "mi/hr" }, target: "km/hr", answer: 136.79, compound: true, multiStep: true },
+                { question: "Convert 120 feet per second into meters per second", start: { value: 120, unit: "ft/s" }, target: "m/s", answer: 36.58, compound: true, multiStep: true },
+                { question: "Convert 140 kilometers per hour into miles per hour", start: { value: 140, unit: "km/hr" }, target: "mi/hr", answer: 86.99, compound: true, multiStep: true },
+                { question: "Convert 18 meters per second into feet per second", start: { value: 18, unit: "m/s" }, target: "ft/s", answer: 59.06, compound: true, multiStep: true },
+                { question: "Convert 105 miles per hour into meters per second", start: { value: 105, unit: "mi/hr" }, target: "m/s", answer: 46.94, compound: true, multiStep: true },
+                { question: "Convert 160 kilometers per hour into feet per second", start: { value: 160, unit: "km/hr" }, target: "ft/s", answer: 145.67, compound: true, multiStep: true }
+            ]
+        };
+
+        let currentDifficulty = 'easy';
+        let currentQuestion = null;
+        let droppedFractions = [];
+        let draggedElement = null;
+        let activeFireworks = [];
+        let nearestDropZone = null;
+
+        // Conversion factors database
+        const conversionFactors = {
+            length: [
+                { pair: ["1 m", "100 cm"] },
+                { pair: ["1 km", "1000 m"] },
+                { pair: ["1 mi", "5280 ft"] },
+                { pair: ["1 mi", "1.609 km"] },
+                { pair: ["1 ft", "12 in"] },
+                { pair: ["1 yd", "3 ft"] },
+                { pair: ["1 ft", "0.3048 m"] },
+                { pair: ["1 in", "2.54 cm"] }
+            ],
+            time: [
+                { pair: ["1 min", "60 s"] },
+                { pair: ["1 hr", "60 min"] },
+                { pair: ["1 hr", "3600 s"] }
+            ],
+            mass: [
+                { pair: ["1 kg", "1000 g"] },
+                { pair: ["1 lb", "16 oz"] },
+                { pair: ["1 kg", "2.205 lb"] },
+                { pair: ["1 lb", "453.6 g"] }
+            ],
+            volume: [
+                { pair: ["1 L", "1000 mL"] },
+                { pair: ["1 gal", "4 qt"] },
+                { pair: ["1 qt", "2 pt"] },
+                { pair: ["1 pt", "2 cup"] },
+                { pair: ["1 gal", "3.785 L"] }
+            ]
+        };
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            updateUnitsBank();
+            setupDragEvents();
+        });
+
+        function setDifficulty(difficulty) {
+            currentDifficulty = difficulty;
+            
+            // Update button states
+            document.querySelectorAll('.difficulty-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.querySelector(`.difficulty-btn.${difficulty}`).classList.add('active');
+            
+            // Update units bank
+            updateUnitsBank();
+            
+            // Get new question
+            newQuestion();
+        }
+
+        function updateUnitsBank() {
+            const unitsBank = document.getElementById('unitsBank');
+            unitsBank.innerHTML = '';
+            
+            let categories = ['length', 'time', 'mass'];
+            if (currentDifficulty === 'medium' || currentDifficulty === 'hard') {
+                categories.push('volume');
+            }
+            
+            categories.forEach(category => {
+                const section = document.createElement('div');
+                section.className = 'bank-section';
+                
+                const title = document.createElement('div');
+                title.className = 'bank-title';
+                const icons = { length: '📏', time: '⏱️', mass: '⚖️', volume: '🧪' };
+                const names = { length: 'Length', time: 'Time', mass: 'Mass', volume: 'Volume' };
+                title.textContent = `${icons[category]} ${names[category]}`;
+                
+                const items = document.createElement('div');
+                items.className = 'conversion-items';
+                
+                conversionFactors[category].forEach(factor => {
+                    const pair = document.createElement('div');
+                    pair.className = 'conversion-pair';
+                    pair.draggable = true;
+                    pair.dataset.num = factor.pair[0];
+                    pair.dataset.den = factor.pair[1];
+                    
+                    pair.innerHTML = `
+                        <span>${factor.pair[0]}</span>
+                        <span>=</span>
+                        <span>${factor.pair[1]}</span>
+                    `;
+                    
+                    items.appendChild(pair);
+                });
+                
+                section.appendChild(title);
+                section.appendChild(items);
+                unitsBank.appendChild(section);
+            });
+            
+            setupDragEvents();
+        }
+
+        function setupDragEvents() {
+            const draggables = document.querySelectorAll('.conversion-pair');
+            draggables.forEach(draggable => {
+                draggable.addEventListener('dragstart', handleDragStart);
+                draggable.addEventListener('dragend', handleDragEnd);
+                draggable.addEventListener('drag', handleDrag);
+            });
+        }
+
+        function handleDragStart(e) {
+            draggedElement = e.currentTarget;
+            e.dataTransfer.effectAllowed = 'copy';
+            e.currentTarget.style.opacity = '0.5';
+        }
+
+        function handleDragEnd(e) {
+            e.currentTarget.style.opacity = '1';
+            
+            if (nearestDropZone) {
+                const rect = nearestDropZone.getBoundingClientRect();
+                const distance = Math.sqrt(
+                    Math.pow(e.clientX - (rect.left + rect.width / 2), 2) +
+                    Math.pow(e.clientY - (rect.top + rect.height / 2), 2)
+                );
+                
+                if (distance < 150) {
+                    handleDropOnZone(nearestDropZone);
+                }
+                
+                nearestDropZone.classList.remove('over');
+                nearestDropZone = null;
+            }
+        }
+
+        function handleDrag(e) {
+            if (e.clientX === 0 && e.clientY === 0) return;
+            
+            const dropZones = document.querySelectorAll('.drop-zone:not(.filled)');
+            let closest = null;
+            let closestDistance = Infinity;
+            
+            dropZones.forEach(zone => {
+                const rect = zone.getBoundingClientRect();
+                const centerX = rect.left + rect.width / 2;
+                const centerY = rect.top + rect.height / 2;
+                const distance = Math.sqrt(
+                    Math.pow(e.clientX - centerX, 2) +
+                    Math.pow(e.clientY - centerY, 2)
+                );
+                
+                if (distance < 150 && distance < closestDistance) {
+                    closest = zone;
+                    closestDistance = distance;
+                }
+            });
+            
+            if (nearestDropZone && nearestDropZone !== closest) {
+                nearestDropZone.classList.remove('over');
+            }
+            if (closest) {
+                closest.classList.add('over');
+            }
+            nearestDropZone = closest;
+        }
+
+        function newQuestion() {
+            const questions = questionBank[currentDifficulty];
+            currentQuestion = questions[Math.floor(Math.random() * questions.length)];
+            droppedFractions = [];
+            document.getElementById('questionDisplay').textContent = currentQuestion.question;
+            document.getElementById('feedback').style.display = 'none';
+            buildEquation();
+        }
+
+        function expandSquaredUnit(unit) {
+            if (unit.includes('^')) {
+                const match = unit.match(/^(.+)\^(\d+)$/);
+                if (match) {
+                    const base = match[1];
+                    const power = parseInt(match[2]);
+                    const expanded = [];
+                    for (let i = 0; i < power; i++) {
+                        expanded.push(base);
+                    }
+                    return expanded;
+                }
+            }
+            return [unit];
+        }
+
+        function buildEquation() {
+            const equationLine = document.getElementById('equationLine');
+            equationLine.innerHTML = '';
+
+            let numeratorText = currentQuestion.start.value.toString();
+            let denominatorText = '1';
+            
+            const unitParts = currentQuestion.start.unit.split('/');
+            if (unitParts.length > 1) {
+                numeratorText = `${currentQuestion.start.value} ${unitParts[0]}`;
+                const expandedDenom = [];
+                for (let i = 1; i < unitParts.length; i++) {
+                    expandedDenom.push(...expandSquaredUnit(unitParts[i]));
+                }
+                denominatorText = expandedDenom.join(' × ');
+            } else {
+                numeratorText = `${currentQuestion.start.value} ${currentQuestion.start.unit}`;
+            }
+            
+            const startFraction = createStackedFraction(numeratorText, denominatorText);
+            equationLine.appendChild(startFraction);
+
+            const multSign = document.createElement('span');
+            multSign.textContent = ' × ';
+            equationLine.appendChild(multSign);
+
+            const dropZone1 = createDropZone(0);
+            equationLine.appendChild(dropZone1);
+
+            const equals1 = document.createElement('span');
+            equals1.id = 'firstEquals';
+            equals1.textContent = ' = ';
+            equationLine.appendChild(equals1);
+
+            const resultZone = document.createElement('span');
+            resultZone.id = 'resultZone';
+            resultZone.style.fontWeight = 'bold';
+            resultZone.style.color = '#667eea';
+            equationLine.appendChild(resultZone);
+
+            updateResult();
+        }
+
+        function createStackedFraction(numerator, denominator) {
+            const fraction = document.createElement('span');
+            fraction.className = 'stacked-fraction';
+            
+            const num = document.createElement('div');
+            num.className = 'stacked-numerator';
+            num.textContent = numerator;
+            
+            const line = document.createElement('div');
+            line.className = 'stacked-line';
+            
+            const den = document.createElement('div');
+            den.className = 'stacked-denominator';
+            den.textContent = denominator;
+            
+            fraction.appendChild(num);
+            fraction.appendChild(line);
+            fraction.appendChild(den);
+            
+            return fraction;
+        }
+
+        function createDropZone(index) {
+            const zone = document.createElement('div');
+            zone.className = 'drop-zone';
+            zone.dataset.index = index;
+            
+            zone.addEventListener('dragover', handleDragOver);
+            zone.addEventListener('dragleave', handleDragLeave);
+            zone.addEventListener('drop', handleDrop);
+            
+            return zone;
+        }
+
+        function handleDragOver(e) {
+            e.preventDefault();
+            e.currentTarget.classList.add('over');
+        }
+
+        function handleDragLeave(e) {
+            e.currentTarget.classList.remove('over');
+        }
+
+        function handleDrop(e) {
+            e.preventDefault();
+            e.currentTarget.classList.remove('over');
+            handleDropOnZone(e.currentTarget);
+        }
+
+        function handleDropOnZone(dropZone) {
+            if (!draggedElement) return;
+            
+            const numerator = draggedElement.dataset.num;
+            const denominator = draggedElement.dataset.den;
+            
+            const fraction = createFractionStructure(numerator, denominator);
+            dropZone.innerHTML = '';
+            dropZone.appendChild(fraction);
+            dropZone.classList.add('filled');
+            
+            const index = parseInt(dropZone.dataset.index);
+            droppedFractions[index] = { 
+                numerator: numerator, 
+                denominator: denominator,
+                element: fraction 
+            };
+            
+            const removeBtn = document.createElement('button');
+            removeBtn.className = 'remove-btn';
+            removeBtn.textContent = '×';
+            removeBtn.onclick = () => {
+                removeDropZone(dropZone, index);
+            };
+            dropZone.appendChild(removeBtn);
+            
+            addNextFractionSlot();
+            updateResult();
+        }
+
+        function removeDropZone(dropZone, index) {
+            droppedFractions[index] = null;
+            
+            let prevElement = dropZone.previousElementSibling;
+            if (prevElement && prevElement.textContent.trim() === '×') {
+                prevElement.remove();
+            }
+            
+            dropZone.remove();
+            cleanupDropZones();
+            updateResult();
+        }
+
+        function cleanupDropZones() {
+            const equationLine = document.getElementById('equationLine');
+            const allDropZones = equationLine.querySelectorAll('.drop-zone');
+            
+            let emptyCount = 0;
+            let lastEmptyZone = null;
+            
+            allDropZones.forEach(zone => {
+                if (!zone.classList.contains('filled')) {
+                    emptyCount++;
+                    lastEmptyZone = zone;
+                }
+            });
+            
+            if (emptyCount > 1) {
+                allDropZones.forEach(zone => {
+                    if (!zone.classList.contains('filled') && zone !== lastEmptyZone) {
+                        let prevElement = zone.previousElementSibling;
+                        if (prevElement && prevElement.textContent.trim() === '×') {
+                            prevElement.remove();
+                        }
+                        zone.remove();
+                    }
+                });
+            }
+            
+            if (emptyCount === 0) {
+                addNextFractionSlot();
+            }
+        }
+
+        function createFractionStructure(numerator, denominator) {
+            const container = document.createElement('div');
+            container.className = 'fraction-container';
+            container.dataset.numerator = numerator;
+            container.dataset.denominator = denominator;
+            
+            const tooltip = document.createElement('div');
+            tooltip.className = 'flip-tooltip';
+            tooltip.textContent = 'Click to flip';
+            container.appendChild(tooltip);
+            
+            const numPart = document.createElement('div');
+            numPart.className = 'fraction-part';
+            numPart.textContent = numerator;
+            
+            const line = document.createElement('div');
+            line.className = 'fraction-line';
+            
+            const denPart = document.createElement('div');
+            denPart.className = 'fraction-part';
+            denPart.textContent = denominator;
+            
+            container.appendChild(numPart);
+            container.appendChild(line);
+            container.appendChild(denPart);
+            
+            container.onclick = (e) => {
+                e.stopPropagation();
+                const temp = container.dataset.numerator;
+                container.dataset.numerator = container.dataset.denominator;
+                container.dataset.denominator = temp;
+                numPart.textContent = container.dataset.numerator;
+                denPart.textContent = container.dataset.denominator;
+                
+                const dropZone = container.closest('.drop-zone');
+                const index = parseInt(dropZone.dataset.index);
+                if (droppedFractions[index]) {
+                    droppedFractions[index].numerator = container.dataset.numerator;
+                    droppedFractions[index].denominator = container.dataset.denominator;
+                }
+                
+                updateResult();
+            };
+            
+            return container;
+        }
+
+        function addNextFractionSlot() {
+            const equationLine = document.getElementById('equationLine');
+            const firstEquals = document.getElementById('firstEquals');
+            
+            const existingSlots = document.querySelectorAll('.drop-zone');
+            let hasEmptySlot = false;
+            existingSlots.forEach(slot => {
+                if (!slot.classList.contains('filled')) {
+                    hasEmptySlot = true;
+                }
+            });
+            
+            if (hasEmptySlot) return;
+            
+            const multSign = document.createElement('span');
+            multSign.textContent = ' × ';
+            equationLine.insertBefore(multSign, firstEquals);
+            
+            const newIndex = droppedFractions.length;
+            const dropZone = createDropZone(newIndex);
+            equationLine.insertBefore(dropZone, firstEquals);
+        }
+
+        function updateResult() {
+            let numeratorNumbers = [currentQuestion.start.value];
+            let denominatorNumbers = [];
+            let numeratorUnits = [];
+            let denominatorUnits = [];
+            
+            const startUnits = currentQuestion.start.unit.split('/');
+            if (startUnits.length === 1) {
+                numeratorUnits.push(...expandSquaredUnit(startUnits[0]));
+            } else {
+                numeratorUnits.push(...expandSquaredUnit(startUnits[0]));
+                for (let i = 1; i < startUnits.length; i++) {
+                    denominatorUnits.push(...expandSquaredUnit(startUnits[i]));
+                }
+            }
+            
+            droppedFractions.forEach(fraction => {
+                if (fraction && fraction.numerator && fraction.denominator) {
+                    const numParts = fraction.numerator.split(' ');
+                    const numValue = parseFloat(numParts[0]);
+                    const numUnit = numParts.slice(1).join(' ');
+                    
+                    const denParts = fraction.denominator.split(' ');
+                    const denValue = parseFloat(denParts[0]);
+                    const denUnit = denParts.slice(1).join(' ');
+                    
+                    numeratorNumbers.push(numValue);
+                    denominatorNumbers.push(denValue);
+                    
+                    if (numUnit) {
+                        numeratorUnits.push(...expandSquaredUnit(numUnit));
+                    }
+                    if (denUnit) {
+                        denominatorUnits.push(...expandSquaredUnit(denUnit));
+                    }
+                }
+            });
+            
+            let cancelledNumerator = [...numeratorUnits];
+            let cancelledDenominator = [...denominatorUnits];
+            
+            for (let i = cancelledNumerator.length - 1; i >= 0; i--) {
+                const unit = cancelledNumerator[i];
+                const matchIndex = cancelledDenominator.indexOf(unit);
+                if (matchIndex !== -1) {
+                    cancelledNumerator.splice(i, 1);
+                    cancelledDenominator.splice(matchIndex, 1);
+                }
+            }
+            
+            const resultZone = document.getElementById('resultZone');
+            resultZone.innerHTML = '';
+            
+            if (numeratorNumbers.length > 0 || cancelledNumerator.length > 0 || denominatorNumbers.length > 0 || cancelledDenominator.length > 0) {
+                let numeratorText = numeratorNumbers.join(' × ');
+                if (cancelledNumerator.length > 0) {
+                    numeratorText += ' × ' + cancelledNumerator.join(' × ');
+                }
+                
+                let denominatorText = '';
+                if (denominatorNumbers.length > 0) {
+                    denominatorText = denominatorNumbers.join(' × ');
+                }
+                if (cancelledDenominator.length > 0) {
+                    if (denominatorText) {
+                        denominatorText += ' × ' + cancelledDenominator.join(' × ');
+                    } else {
+                        denominatorText = cancelledDenominator.join(' × ');
+                    }
+                }
+                
+                if (!denominatorText) {
+                    denominatorText = '1';
+                }
+                
+                const resultFraction = createStackedFraction(numeratorText, denominatorText);
+                resultZone.appendChild(resultFraction);
+            }
+        }
+
+        function checkAnswer() {
+            let allFilled = droppedFractions.filter(f => f !== null && f !== undefined).length > 0;
+            
+            if (!allFilled) {
+                showFeedback(false);
+                return;
+            }
+            
+            let result = currentQuestion.start.value;
+            droppedFractions.forEach(fraction => {
+                if (fraction && fraction.numerator && fraction.denominator) {
+                    const num = parseFloat(fraction.numerator.split(' ')[0]);
+                    const den = parseFloat(fraction.denominator.split(' ')[0]);
+                    result *= (num / den);
+                }
+            });
+            
+            let numeratorUnits = [];
+            let denominatorUnits = [];
+            
+            const startUnits = currentQuestion.start.unit.split('/');
+            if (startUnits.length === 1) {
+                numeratorUnits.push(...expandSquaredUnit(startUnits[0]));
+            } else {
+                numeratorUnits.push(...expandSquaredUnit(startUnits[0]));
+                for (let i = 1; i < startUnits.length; i++) {
+                    denominatorUnits.push(...expandSquaredUnit(startUnits[i]));
+                }
+            }
+            
+            droppedFractions.forEach(fraction => {
+                if (fraction && fraction.numerator && fraction.denominator) {
+                    const numUnit = fraction.numerator.split(' ').slice(1).join(' ');
+                    const denUnit = fraction.denominator.split(' ').slice(1).join(' ');
+                    
+                    if (numUnit) {
+                        numeratorUnits.push(...expandSquaredUnit(numUnit));
+                    }
+                    if (denUnit) {
+                        denominatorUnits.push(...expandSquaredUnit(denUnit));
+                    }
+                }
+            });
+            
+            for (let i = numeratorUnits.length - 1; i >= 0; i--) {
+                const unit = numeratorUnits[i];
+                const matchIndex = denominatorUnits.indexOf(unit);
+                if (matchIndex !== -1) {
+                    numeratorUnits.splice(i, 1);
+                    denominatorUnits.splice(matchIndex, 1);
+                }
+            }
+            
+            let finalUnitNum = collapseUnits(numeratorUnits);
+            let finalUnitDen = collapseUnits(denominatorUnits);
+            let finalUnit = finalUnitNum;
+            if (finalUnitDen) {
+                finalUnit = finalUnitNum + '/' + finalUnitDen;
+            }
+            
+            const targetCollapsed = collapseUnits(currentQuestion.target.split('/'));
+            const isCorrect = Math.abs(result - currentQuestion.answer) < 1 && 
+                             finalUnit.replace(/\//g, '') === targetCollapsed.replace(/\//g, '');
+            
+            if (isCorrect) {
+                const resultZone = document.getElementById('resultZone');
+                
+                const equalSign = document.createElement('span');
+                equalSign.textContent = ' = ';
+                resultZone.appendChild(equalSign);
+                
+                const targetParts = currentQuestion.target.split('/');
+                let targetNum = result.toFixed(2);
+                let targetDen = '1';
+                
+                if (targetParts.length > 1) {
+                    targetNum = `${result.toFixed(2)} ${targetParts[0]}`;
+                    const expandedTargetDenom = [];
+                    for (let i = 1; i < targetParts.length; i++) {
+                        expandedTargetDenom.push(...expandSquaredUnit(targetParts[i]));
+                    }
+                    targetDen = expandedTargetDenom.join(' × ');
+                } else {
+                    targetNum = `${result.toFixed(2)} ${currentQuestion.target}`;
+                }
+                
+                const answerFraction = createStackedFraction(targetNum, targetDen);
+                resultZone.appendChild(answerFraction);
+                
+                showFeedback(true);
+                launchFireworks();
+            } else {
+                showFeedback(false);
+            }
+        }
+
+        function collapseUnits(unitArray) {
+            const counts = {};
+            unitArray.forEach(unit => {
+                counts[unit] = (counts[unit] || 0) + 1;
+            });
+            
+            const collapsed = [];
+            for (const unit in counts) {
+                if (counts[unit] > 1) {
+                    collapsed.push(`${unit}^${counts[unit]}`);
+                } else {
+                    collapsed.push(unit);
+                }
+            }
+            return collapsed.join('');
+        }
+
+        function showFeedback(isCorrect) {
+            const feedback = document.getElementById('feedback');
+            feedback.style.display = 'block';
+            
+            if (isCorrect) {
+                feedback.className = 'feedback correct';
+                feedback.textContent = '🎉 Correct! Great job!';
+            } else {
+                feedback.className = 'feedback incorrect';
+                feedback.textContent = '❌ Try again! Check your conversion factors.';
+            }
+        }
+
+        function launchFireworks() {
+            const canvas = document.getElementById('fireworksCanvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            
+            activeFireworks = [];
+            
+            const colors = ['#FF6B6B', '#4ECDC4', '#45B7D1', '#FFA07A', '#98D8C8', '#F7DC6F'];
+            
+            for (let i = 0; i < 5; i++) {
+                setTimeout(() => {
+                    const x = Math.random() * canvas.width;
+                    const y = Math.random() * canvas.height * 0.5;
+                    createFirework(ctx, x, y, colors[Math.floor(Math.random() * colors.length)]);
+                }, i * 300);
+            }
+        }
+
+        function createFirework(ctx, x, y, color) {
+            const particles = [];
+            const particleCount = 30;
+            
+            for (let i = 0; i < particleCount; i++) {
+                const angle = (Math.PI * 2 * i) / particleCount;
+                const velocity = 1 + Math.random() * 1;
+                particles.push({
+                    x: x,
+                    y: y,
+                    vx: Math.cos(angle) * velocity,
+                    vy: Math.sin(angle) * velocity,
+                    opacity: 1,
+                    color: color
+                });
+            }
+            
+            activeFireworks.push(particles);
+            
+            function animate() {
+                ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+                
+                let allDone = true;
+                
+                activeFireworks.forEach((firework, fIndex) => {
+                    let fireworkDone = true;
+                    
+                    firework.forEach(particle => {
+                        if (particle.opacity > 0) {
+                            fireworkDone = false;
+                            allDone = false;
+                            
+                            ctx.beginPath();
+                            ctx.arc(particle.x, particle.y, 3, 0, Math.PI * 2);
+                            ctx.fillStyle = particle.color;
+                            ctx.globalAlpha = particle.opacity;
+                            ctx.fill();
+                            
+                            particle.x += particle.vx * 1.5;
+                            particle.y += particle.vy * 1.5;
+                            particle.opacity -= 0.008;
+                        }
+                    });
+                    
+                    if (fireworkDone) {
+                        activeFireworks.splice(fIndex, 1);
+                    }
+                });
+                
+                ctx.globalAlpha = 1;
+                
+                if (!allDone) {
+                    requestAnimationFrame(animate);
+                } else {
+                    ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+                }
+            }
+            
+            animate();
+        }
+
+        window.onload = () => {
+            newQuestion();
+        };
+    </script>
+</body>
+</html>
