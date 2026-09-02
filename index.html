@@ -69,26 +69,28 @@
 
         .work-area {
             background: #f8f9fa;
-            padding: 30px;
+            padding: 20px;
             border-radius: 12px;
             border: 3px dashed #dee2e6;
-            min-height: 150px;
+            min-height: 100px;
             display: flex;
             flex-direction: column;
-            gap: 20px;
+            gap: 15px;
             position: relative;
             flex: 1;
-            overflow-y: auto;
+            overflow: hidden;
             max-height: 100%;
         }
 
         .equation-line {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
             flex-wrap: wrap;
-            font-size: clamp(14px, 2vw, 20px);
+            font-size: clamp(12px, 1.8vw, 18px);
             font-weight: 600;
+            overflow-x: auto;
+            overflow-y: visible;
         }
 
         .stacked-fraction {
@@ -99,23 +101,25 @@
         }
 
         .stacked-numerator {
-            padding: 4px 8px;
+            padding: 3px 6px;
+            font-size: clamp(11px, 1.6vw, 16px);
         }
 
         .stacked-line {
             width: 100%;
             height: 2px;
             background: #495057;
-            margin: 2px 0;
+            margin: 1px 0;
         }
 
         .stacked-denominator {
-            padding: 4px 8px;
+            padding: 3px 6px;
+            font-size: clamp(11px, 1.6vw, 16px);
         }
 
         .drop-zone {
-            min-width: 80px;
-            min-height: 60px;
+            min-width: 70px;
+            min-height: 55px;
             border: 2px dashed #adb5bd;
             border-radius: 8px;
             display: inline-flex;
@@ -123,8 +127,9 @@
             justify-content: center;
             background: white;
             position: relative;
-            padding: 8px;
+            padding: 6px;
             transition: all 0.3s ease;
+            touch-action: none;
         }
 
         .drop-zone.over {
@@ -144,10 +149,11 @@
             flex-direction: column;
             align-items: center;
             gap: 2px;
-            padding: 8px;
+            padding: 6px;
             cursor: pointer;
             position: relative;
             transition: transform 0.2s;
+            touch-action: manipulation;
         }
 
         .fraction-container:hover {
@@ -161,12 +167,12 @@
 
         .flip-tooltip {
             position: absolute;
-            top: -35px;
+            top: -30px;
             background: #495057;
             color: white;
-            padding: 6px 12px;
+            padding: 5px 10px;
             border-radius: 6px;
-            font-size: clamp(10px, 1.5vw, 12px);
+            font-size: clamp(9px, 1.4vw, 11px);
             white-space: nowrap;
             opacity: 0;
             visibility: hidden;
@@ -178,26 +184,26 @@
         .flip-tooltip::after {
             content: '';
             position: absolute;
-            bottom: -5px;
+            bottom: -4px;
             left: 50%;
             transform: translateX(-50%);
             width: 0;
             height: 0;
-            border-left: 5px solid transparent;
-            border-right: 5px solid transparent;
-            border-top: 5px solid #495057;
+            border-left: 4px solid transparent;
+            border-right: 4px solid transparent;
+            border-top: 4px solid #495057;
         }
 
         .fraction-part {
-            min-width: 60px;
-            padding: 6px 10px;
+            min-width: 55px;
+            padding: 5px 8px;
             display: flex;
             align-items: center;
             justify-content: center;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             border-radius: 6px;
-            font-size: clamp(11px, 1.8vw, 16px);
+            font-size: clamp(10px, 1.6vw, 14px);
             font-weight: 600;
         }
 
@@ -205,7 +211,7 @@
             width: 100%;
             height: 2px;
             background: #495057;
-            margin: 2px 0;
+            margin: 1px 0;
         }
 
         .remove-btn {
@@ -225,19 +231,22 @@
             justify-content: center;
             z-index: 5;
             box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            touch-action: manipulation;
         }
 
-        .drop-zone.filled:hover .remove-btn {
+        .drop-zone.filled:hover .remove-btn,
+        .drop-zone.filled:active .remove-btn {
             display: flex;
         }
 
         .feedback {
             text-align: center;
-            font-size: clamp(14px, 2vw, 20px);
+            font-size: clamp(13px, 1.8vw, 18px);
             font-weight: bold;
-            padding: 15px;
+            padding: 12px;
             border-radius: 10px;
             display: none;
+            flex-shrink: 0;
         }
 
         .feedback.correct {
@@ -303,6 +312,7 @@
             font-size: clamp(10px, 1.2vw, 13px);
             user-select: none;
             justify-content: center;
+            touch-action: none;
         }
 
         .conversion-pair:hover {
@@ -312,6 +322,10 @@
 
         .conversion-pair:active {
             cursor: grabbing;
+        }
+
+        .conversion-pair.dragging {
+            opacity: 0.5;
         }
 
         .conversion-pair span {
@@ -391,7 +405,7 @@
             }
 
             .work-area {
-                padding: 20px;
+                padding: 15px;
             }
         }
 
@@ -426,8 +440,8 @@
             }
 
             .work-area {
-                padding: 15px;
-                min-height: 120px;
+                padding: 12px;
+                min-height: 90px;
             }
 
             .difficulty-selector {
@@ -437,6 +451,20 @@
             .btn.difficulty-btn {
                 flex: 1;
                 padding: 10px 15px;
+            }
+
+            .equation-line {
+                gap: 6px;
+            }
+
+            .drop-zone {
+                min-width: 60px;
+                min-height: 50px;
+            }
+
+            .fraction-part {
+                min-width: 50px;
+                padding: 4px 6px;
             }
         }
 
@@ -452,8 +480,8 @@
             }
 
             .work-area {
-                padding: 12px;
-                min-height: 100px;
+                padding: 10px;
+                min-height: 80px;
             }
 
             .units-bank-container {
@@ -473,12 +501,12 @@
             }
 
             .question-display {
-                padding: 15px;
+                padding: 12px;
             }
 
             .work-area {
-                padding: 15px;
-                min-height: 100px;
+                padding: 12px;
+                min-height: 80px;
             }
 
             .btn {
@@ -514,8 +542,8 @@
             }
 
             .work-area {
-                padding: 10px;
-                min-height: 80px;
+                padding: 8px;
+                min-height: 70px;
             }
 
             .bank-section {
@@ -527,6 +555,10 @@
             }
 
             .difficulty-selector {
+                gap: 5px;
+            }
+
+            .equation-line {
                 gap: 5px;
             }
         }
@@ -558,17 +590,22 @@
             }
 
             .work-area {
-                padding: 12px;
+                padding: 10px;
             }
 
             .drop-zone {
-                min-width: 60px;
-                min-height: 50px;
+                min-width: 55px;
+                min-height: 45px;
+                padding: 4px;
             }
 
             .fraction-part {
-                min-width: 50px;
-                padding: 5px 8px;
+                min-width: 45px;
+                padding: 4px 6px;
+            }
+
+            .equation-line {
+                gap: 5px;
             }
         }
 
@@ -599,7 +636,7 @@
             }
 
             .work-area {
-                padding: 10px;
+                padding: 8px;
             }
 
             .difficulty-selector {
@@ -608,6 +645,10 @@
 
             .btn.difficulty-btn {
                 padding: 8px 10px;
+            }
+
+            .equation-line {
+                gap: 4px;
             }
         }
     </style>
@@ -774,6 +815,8 @@
         let draggedElement = null;
         let activeFireworks = [];
         let nearestDropZone = null;
+        let touchStartX = 0;
+        let touchStartY = 0;
 
         // Conversion factors database
         const conversionFactors = {
@@ -806,7 +849,6 @@
                 { pair: ["1 gal", "3.785 L"] }
             ]
         };
-
         // Initialize
         document.addEventListener('DOMContentLoaded', () => {
             updateUnitsBank();
@@ -878,12 +920,84 @@
         function setupDragEvents() {
             const draggables = document.querySelectorAll('.conversion-pair');
             draggables.forEach(draggable => {
+                // Mouse events
                 draggable.addEventListener('dragstart', handleDragStart);
                 draggable.addEventListener('dragend', handleDragEnd);
                 draggable.addEventListener('drag', handleDrag);
+                
+                // Touch events for iPad
+                draggable.addEventListener('touchstart', handleTouchStart, { passive: false });
+                draggable.addEventListener('touchmove', handleTouchMove, { passive: false });
+                draggable.addEventListener('touchend', handleTouchEnd, { passive: false });
             });
         }
 
+        // Touch event handlers for iPad
+        function handleTouchStart(e) {
+            e.preventDefault();
+            draggedElement = e.currentTarget;
+            draggedElement.classList.add('dragging');
+            
+            const touch = e.touches[0];
+            touchStartX = touch.clientX;
+            touchStartY = touch.clientY;
+        }
+
+        function handleTouchMove(e) {
+            e.preventDefault();
+            if (!draggedElement) return;
+            
+            const touch = e.touches[0];
+            const x = touch.clientX;
+            const y = touch.clientY;
+            
+            // Find drop zones under touch point
+            const dropZones = document.querySelectorAll('.drop-zone:not(.filled)');
+            let closest = null;
+            let closestDistance = Infinity;
+            
+            dropZones.forEach(zone => {
+                const rect = zone.getBoundingClientRect();
+                const centerX = rect.left + rect.width / 2;
+                const centerY = rect.top + rect.height / 2;
+                const distance = Math.sqrt(
+                    Math.pow(x - centerX, 2) +
+                    Math.pow(y - centerY, 2)
+                );
+                
+                if (distance < 150 && distance < closestDistance) {
+                    closest = zone;
+                    closestDistance = distance;
+                }
+            });
+            
+            // Update visual feedback
+            if (nearestDropZone && nearestDropZone !== closest) {
+                nearestDropZone.classList.remove('over');
+            }
+            if (closest) {
+                closest.classList.add('over');
+            }
+            nearestDropZone = closest;
+        }
+
+        function handleTouchEnd(e) {
+            e.preventDefault();
+            
+            if (draggedElement) {
+                draggedElement.classList.remove('dragging');
+            }
+            
+            if (nearestDropZone) {
+                handleDropOnZone(nearestDropZone);
+                nearestDropZone.classList.remove('over');
+                nearestDropZone = null;
+            }
+            
+            draggedElement = null;
+        }
+
+        // Mouse event handlers
         function handleDragStart(e) {
             draggedElement = e.currentTarget;
             e.dataTransfer.effectAllowed = 'copy';
