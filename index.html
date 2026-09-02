@@ -76,10 +76,8 @@
             display: flex;
             flex-direction: column;
             gap: 15px;
-            position: relative;
             flex: 1;
             overflow: hidden;
-            max-height: 100%;
         }
 
         .equation-line {
@@ -100,21 +98,16 @@
             vertical-align: middle;
         }
 
-        .stacked-numerator {
+        .stacked-numerator, .stacked-denominator {
             padding: 3px 6px;
             font-size: clamp(11px, 1.6vw, 16px);
         }
 
-        .stacked-line {
+        .stacked-line, .fraction-line {
             width: 100%;
             height: 2px;
             background: #495057;
             margin: 1px 0;
-        }
-
-        .stacked-denominator {
-            padding: 3px 6px;
-            font-size: clamp(11px, 1.6vw, 16px);
         }
 
         .drop-zone {
@@ -187,8 +180,6 @@
             bottom: -4px;
             left: 50%;
             transform: translateX(-50%);
-            width: 0;
-            height: 0;
             border-left: 4px solid transparent;
             border-right: 4px solid transparent;
             border-top: 4px solid #495057;
@@ -205,13 +196,6 @@
             border-radius: 6px;
             font-size: clamp(10px, 1.6vw, 14px);
             font-weight: 600;
-        }
-
-        .fraction-line {
-            width: 100%;
-            height: 2px;
-            background: #495057;
-            margin: 1px 0;
         }
 
         .remove-btn {
@@ -269,7 +253,6 @@
             background: #f8f9fa;
             border-radius: 12px;
             flex-shrink: 0;
-            overflow: visible;
         }
 
         .bank-section {
@@ -389,267 +372,77 @@
 
         /* Responsive Design */
         @media (max-width: 1024px) and (min-width: 768px) {
-            body {
-                padding: 25px 0;
-            }
-            
-            .container {
-                max-height: calc(100vh - 50px);
-                gap: 15px;
-                padding: 15px;
-            }
-
-            .units-bank-container {
-                grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-                gap: 8px;
-            }
-
-            .work-area {
-                padding: 15px;
-            }
+            body { padding: 25px 0; }
+            .container { max-height: calc(100vh - 50px); gap: 15px; padding: 15px; }
+            .units-bank-container { grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 8px; }
+            .work-area { padding: 15px; }
         }
 
         @media (max-width: 768px) {
-            body {
-                padding: 25px 0;
-            }
-
-            .container {
-                max-height: calc(100vh - 50px);
-                gap: 12px;
-                padding: 12px;
-            }
-
-            .top-section {
-                flex-direction: column;
-                gap: 12px;
-            }
-
-            .control-panel {
-                width: 100%;
-                justify-content: stretch;
-            }
-
-            .btn.check-btn {
-                width: 100%;
-            }
-
-            .units-bank-container {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 8px;
-            }
-
-            .work-area {
-                padding: 12px;
-                min-height: 90px;
-            }
-
-            .difficulty-selector {
-                gap: 8px;
-            }
-
-            .btn.difficulty-btn {
-                flex: 1;
-                padding: 10px 15px;
-            }
-
-            .equation-line {
-                gap: 6px;
-            }
-
-            .drop-zone {
-                min-width: 60px;
-                min-height: 50px;
-            }
-
-            .fraction-part {
-                min-width: 50px;
-                padding: 4px 6px;
-            }
+            body { padding: 25px 0; }
+            .container { max-height: calc(100vh - 50px); gap: 12px; padding: 12px; }
+            .top-section { flex-direction: column; gap: 12px; }
+            .control-panel { width: 100%; justify-content: stretch; }
+            .btn.check-btn { width: 100%; }
+            .units-bank-container { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+            .work-area { padding: 12px; min-height: 90px; }
+            .difficulty-selector { gap: 8px; }
+            .btn.difficulty-btn { flex: 1; padding: 10px 15px; }
+            .equation-line { gap: 6px; }
+            .drop-zone { min-width: 60px; min-height: 50px; }
+            .fraction-part { min-width: 50px; padding: 4px 6px; }
         }
 
         @media (max-width: 900px) and (orientation: landscape) {
-            body {
-                padding: 15px 0;
-            }
-
-            .container {
-                max-height: calc(100vh - 30px);
-                gap: 8px;
-                padding: 10px;
-            }
-
-            .work-area {
-                padding: 10px;
-                min-height: 80px;
-            }
-
-            .units-bank-container {
-                grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-            }
+            body { padding: 15px 0; }
+            .container { max-height: calc(100vh - 30px); gap: 8px; padding: 10px; }
+            .work-area { padding: 10px; min-height: 80px; }
+            .units-bank-container { grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); }
         }
 
         @media (max-height: 700px) {
-            body {
-                padding: 20px 0;
-            }
-
-            .container {
-                max-height: calc(100vh - 40px);
-                padding: 10px;
-                gap: 10px;
-            }
-
-            .question-display {
-                padding: 12px;
-            }
-
-            .work-area {
-                padding: 12px;
-                min-height: 80px;
-            }
-
-            .btn {
-                padding: 12px 20px;
-            }
-
-            .btn.difficulty-btn {
-                padding: 10px 15px;
-            }
+            body { padding: 20px 0; }
+            .container { max-height: calc(100vh - 40px); padding: 10px; gap: 10px; }
+            .question-display { padding: 12px; }
+            .work-area { padding: 12px; min-height: 80px; }
+            .btn { padding: 12px 20px; }
+            .btn.difficulty-btn { padding: 10px 15px; }
         }
 
         @media (max-height: 600px) and (orientation: landscape) {
-            body {
-                padding: 10px 0;
-            }
-
-            .container {
-                max-height: calc(100vh - 20px);
-                padding: 8px;
-                gap: 8px;
-            }
-
-            .btn {
-                padding: 8px 15px;
-            }
-
-            .btn.difficulty-btn {
-                padding: 8px 12px;
-            }
-
-            .question-display {
-                padding: 10px;
-            }
-
-            .work-area {
-                padding: 8px;
-                min-height: 70px;
-            }
-
-            .bank-section {
-                padding: 6px;
-            }
-
-            .conversion-pair {
-                padding: 4px;
-            }
-
-            .difficulty-selector {
-                gap: 5px;
-            }
-
-            .equation-line {
-                gap: 5px;
-            }
+            body { padding: 10px 0; }
+            .container { max-height: calc(100vh - 20px); padding: 8px; gap: 8px; }
+            .btn { padding: 8px 15px; }
+            .btn.difficulty-btn { padding: 8px 12px; }
+            .question-display, .work-area { padding: 10px; }
+            .work-area { min-height: 70px; }
+            .bank-section { padding: 6px; }
+            .conversion-pair { padding: 4px; }
+            .difficulty-selector, .equation-line { gap: 5px; }
         }
 
         @media (max-width: 480px) {
-            body {
-                padding: 20px 0;
-            }
-
-            .container {
-                max-height: calc(100vh - 40px);
-                padding: 10px;
-                gap: 10px;
-            }
-
-            .units-bank-container {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 6px;
-                padding: 8px;
-            }
-
-            .bank-section {
-                padding: 8px;
-            }
-
-            .conversion-pair {
-                padding: 5px;
-                gap: 3px;
-            }
-
-            .work-area {
-                padding: 10px;
-            }
-
-            .drop-zone {
-                min-width: 55px;
-                min-height: 45px;
-                padding: 4px;
-            }
-
-            .fraction-part {
-                min-width: 45px;
-                padding: 4px 6px;
-            }
-
-            .equation-line {
-                gap: 5px;
-            }
+            body { padding: 20px 0; }
+            .container { max-height: calc(100vh - 40px); padding: 10px; gap: 10px; }
+            .units-bank-container { grid-template-columns: repeat(2, 1fr); gap: 6px; padding: 8px; }
+            .bank-section { padding: 8px; }
+            .conversion-pair { padding: 5px; gap: 3px; }
+            .work-area { padding: 10px; }
+            .drop-zone { min-width: 55px; min-height: 45px; padding: 4px; }
+            .fraction-part { min-width: 45px; padding: 4px 6px; }
+            .equation-line { gap: 5px; }
         }
 
         @media (max-width: 360px) {
-            body {
-                padding: 15px 0;
-            }
-
-            .container {
-                max-height: calc(100vh - 30px);
-                padding: 8px;
-                gap: 8px;
-            }
-
-            .units-bank-container {
-                grid-template-columns: 1fr 1fr;
-                gap: 5px;
-                padding: 6px;
-            }
-
-            .bank-section {
-                padding: 6px;
-            }
-
-            .conversion-pair {
-                padding: 4px;
-                gap: 2px;
-            }
-
-            .work-area {
-                padding: 8px;
-            }
-
-            .difficulty-selector {
-                gap: 4px;
-            }
-
-            .btn.difficulty-btn {
-                padding: 8px 10px;
-            }
-
-            .equation-line {
-                gap: 4px;
-            }
+            body { padding: 15px 0; }
+            .container { max-height: calc(100vh - 30px); padding: 8px; gap: 8px; }
+            .units-bank-container { grid-template-columns: 1fr 1fr; gap: 5px; padding: 6px; }
+            .bank-section { padding: 6px; }
+            .conversion-pair { padding: 4px; gap: 2px; }
+            .work-area { padding: 8px; }
+            .difficulty-selector { gap: 4px; }
+            .btn.difficulty-btn { padding: 8px 10px; }
+            .equation-line { gap: 4px; }
         }
     </style>
 </head>
@@ -671,19 +464,30 @@
         </div>
 
         <div class="work-area" id="workArea">
-            <div class="equation-line" id="equationLine">
-                <!-- Equation will be built here -->
-            </div>
+            <div class="equation-line" id="equationLine"></div>
             <div class="feedback" id="feedback"></div>
         </div>
 
-        <div class="units-bank-container" id="unitsBank">
-            <!-- Will be populated dynamically -->
-        </div>
+        <div class="units-bank-container" id="unitsBank"></div>
     </div>
 
     <canvas class="fireworks" id="fireworksCanvas"></canvas>
     <script>
+        // Constants
+        const PROXIMITY_THRESHOLD = 150;
+        const ANSWER_TOLERANCE = 1;
+        const FIREWORK_COUNT = 5;
+        const FIREWORK_DELAY = 300;
+        const PARTICLE_COUNT = 30;
+        const FIREWORK_COLORS = ['#FF6B6B', '#4ECDC4', '#45B7D1', '#FFA07A', '#98D8C8', '#F7DC6F'];
+        
+        const CATEGORY_CONFIG = {
+            length: { icon: '📏', name: 'Length' },
+            time: { icon: '⏱️', name: 'Time' },
+            mass: { icon: '⚖️', name: 'Mass' },
+            volume: { icon: '🧪', name: 'Volume' }
+        };
+
         // Question Bank - 100 questions total
         const questionBank = {
             easy: [
@@ -809,15 +613,6 @@
             ]
         };
 
-        let currentDifficulty = 'easy';
-        let currentQuestion = null;
-        let droppedFractions = [];
-        let draggedElement = null;
-        let activeFireworks = [];
-        let nearestDropZone = null;
-        let touchStartX = 0;
-        let touchStartY = 0;
-
         // Conversion factors database
         const conversionFactors = {
             length: [
@@ -849,109 +644,43 @@
                 { pair: ["1 gal", "3.785 L"] }
             ]
         };
-        // Initialize
-        document.addEventListener('DOMContentLoaded', () => {
-            updateUnitsBank();
-            setupDragEvents();
-        });
 
-        function setDifficulty(difficulty) {
-            currentDifficulty = difficulty;
-            
-            // Update button states
-            document.querySelectorAll('.difficulty-btn').forEach(btn => {
-                btn.classList.remove('active');
-            });
-            document.querySelector(`.difficulty-btn.${difficulty}`).classList.add('active');
-            
-            // Update units bank
-            updateUnitsBank();
-            
-            // Get new question
-            newQuestion();
-        }
-
-        function updateUnitsBank() {
-            const unitsBank = document.getElementById('unitsBank');
-            unitsBank.innerHTML = '';
-            
-            let categories = ['length', 'time', 'mass'];
-            if (currentDifficulty === 'medium' || currentDifficulty === 'hard') {
-                categories.push('volume');
+        // State variables
+        let currentDifficulty = 'easy';
+        let currentQuestion = null;
+        let droppedFractions = [];
+        let draggedElement = null;
+        let activeFireworks = [];
+        let nearestDropZone = null;
+        // Utility Functions
+        function expandSquaredUnit(unit) {
+            const match = unit.match(/^(.+)\^(\d+)$/);
+            if (match) {
+                const base = match[1];
+                const power = parseInt(match[2]);
+                return Array(power).fill(base);
             }
-            
-            categories.forEach(category => {
-                const section = document.createElement('div');
-                section.className = 'bank-section';
-                
-                const title = document.createElement('div');
-                title.className = 'bank-title';
-                const icons = { length: '📏', time: '⏱️', mass: '⚖️', volume: '🧪' };
-                const names = { length: 'Length', time: 'Time', mass: 'Mass', volume: 'Volume' };
-                title.textContent = `${icons[category]} ${names[category]}`;
-                
-                const items = document.createElement('div');
-                items.className = 'conversion-items';
-                
-                conversionFactors[category].forEach(factor => {
-                    const pair = document.createElement('div');
-                    pair.className = 'conversion-pair';
-                    pair.draggable = true;
-                    pair.dataset.num = factor.pair[0];
-                    pair.dataset.den = factor.pair[1];
-                    
-                    pair.innerHTML = `
-                        <span>${factor.pair[0]}</span>
-                        <span>=</span>
-                        <span>${factor.pair[1]}</span>
-                    `;
-                    
-                    items.appendChild(pair);
-                });
-                
-                section.appendChild(title);
-                section.appendChild(items);
-                unitsBank.appendChild(section);
-            });
-            
-            setupDragEvents();
+            return [unit];
         }
 
-        function setupDragEvents() {
-            const draggables = document.querySelectorAll('.conversion-pair');
-            draggables.forEach(draggable => {
-                // Mouse events
-                draggable.addEventListener('dragstart', handleDragStart);
-                draggable.addEventListener('dragend', handleDragEnd);
-                draggable.addEventListener('drag', handleDrag);
-                
-                // Touch events for iPad
-                draggable.addEventListener('touchstart', handleTouchStart, { passive: false });
-                draggable.addEventListener('touchmove', handleTouchMove, { passive: false });
-                draggable.addEventListener('touchend', handleTouchEnd, { passive: false });
-            });
+        function collapseUnits(unitArray) {
+            const counts = {};
+            unitArray.forEach(unit => counts[unit] = (counts[unit] || 0) + 1);
+            
+            return Object.entries(counts)
+                .map(([unit, count]) => count > 1 ? `${unit}^${count}` : unit)
+                .join('');
         }
 
-        // Touch event handlers for iPad
-        function handleTouchStart(e) {
-            e.preventDefault();
-            draggedElement = e.currentTarget;
-            draggedElement.classList.add('dragging');
-            
-            const touch = e.touches[0];
-            touchStartX = touch.clientX;
-            touchStartY = touch.clientY;
+        function parseValue(text) {
+            const parts = text.split(' ');
+            return {
+                value: parseFloat(parts[0]),
+                unit: parts.slice(1).join(' ')
+            };
         }
 
-        function handleTouchMove(e) {
-            e.preventDefault();
-            if (!draggedElement) return;
-            
-            const touch = e.touches[0];
-            const x = touch.clientX;
-            const y = touch.clientY;
-            
-            // Find drop zones under touch point
+        function findClosestDropZone(x, y) {
             const dropZones = document.querySelectorAll('.drop-zone:not(.filled)');
             let closest = null;
             let closestDistance = Infinity;
@@ -960,18 +689,141 @@
                 const rect = zone.getBoundingClientRect();
                 const centerX = rect.left + rect.width / 2;
                 const centerY = rect.top + rect.height / 2;
-                const distance = Math.sqrt(
-                    Math.pow(x - centerX, 2) +
-                    Math.pow(y - centerY, 2)
-                );
+                const distance = Math.hypot(x - centerX, y - centerY);
                 
-                if (distance < 150 && distance < closestDistance) {
+                if (distance < PROXIMITY_THRESHOLD && distance < closestDistance) {
                     closest = zone;
                     closestDistance = distance;
                 }
             });
             
-            // Update visual feedback
+            return closest;
+        }
+
+        // DOM Creation Functions
+        function createStackedFraction(numerator, denominator) {
+            const fraction = document.createElement('span');
+            fraction.className = 'stacked-fraction';
+            fraction.innerHTML = `
+                <div class="stacked-numerator">${numerator}</div>
+                <div class="stacked-line"></div>
+                <div class="stacked-denominator">${denominator}</div>
+            `;
+            return fraction;
+        }
+
+        function createFractionStructure(numerator, denominator) {
+            const container = document.createElement('div');
+            container.className = 'fraction-container';
+            container.dataset.numerator = numerator;
+            container.dataset.denominator = denominator;
+            
+            container.innerHTML = `
+                <div class="flip-tooltip">Click to flip</div>
+                <div class="fraction-part">${numerator}</div>
+                <div class="fraction-line"></div>
+                <div class="fraction-part">${denominator}</div>
+            `;
+            
+            container.onclick = (e) => {
+                e.stopPropagation();
+                [container.dataset.numerator, container.dataset.denominator] = 
+                    [container.dataset.denominator, container.dataset.numerator];
+                
+                const parts = container.querySelectorAll('.fraction-part');
+                parts[0].textContent = container.dataset.numerator;
+                parts[1].textContent = container.dataset.denominator;
+                
+                const dropZone = container.closest('.drop-zone');
+                const index = parseInt(dropZone.dataset.index);
+                if (droppedFractions[index]) {
+                    droppedFractions[index].numerator = container.dataset.numerator;
+                    droppedFractions[index].denominator = container.dataset.denominator;
+                }
+                
+                updateResult();
+            };
+            
+            return container;
+        }
+
+        function createDropZone(index) {
+            const zone = document.createElement('div');
+            zone.className = 'drop-zone';
+            zone.dataset.index = index;
+            
+            zone.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                e.currentTarget.classList.add('over');
+            });
+            
+            zone.addEventListener('dragleave', (e) => {
+                e.currentTarget.classList.remove('over');
+            });
+            
+            zone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                e.currentTarget.classList.remove('over');
+                handleDropOnZone(e.currentTarget);
+            });
+            
+            return zone;
+        }
+
+        // Drag and Drop Event Handlers
+        function handleDragStart(e) {
+            draggedElement = e.currentTarget;
+            e.dataTransfer.effectAllowed = 'copy';
+            e.currentTarget.style.opacity = '0.5';
+        }
+
+        function handleDragEnd(e) {
+            e.currentTarget.style.opacity = '1';
+            
+            if (nearestDropZone) {
+                const rect = nearestDropZone.getBoundingClientRect();
+                const distance = Math.hypot(
+                    e.clientX - (rect.left + rect.width / 2),
+                    e.clientY - (rect.top + rect.height / 2)
+                );
+                
+                if (distance < PROXIMITY_THRESHOLD) {
+                    handleDropOnZone(nearestDropZone);
+                }
+                
+                nearestDropZone.classList.remove('over');
+                nearestDropZone = null;
+            }
+        }
+
+        function handleDrag(e) {
+            if (e.clientX === 0 && e.clientY === 0) return;
+            
+            const closest = findClosestDropZone(e.clientX, e.clientY);
+            
+            if (nearestDropZone && nearestDropZone !== closest) {
+                nearestDropZone.classList.remove('over');
+            }
+            if (closest) {
+                closest.classList.add('over');
+            }
+            nearestDropZone = closest;
+        }
+
+        // Touch Event Handlers
+        function handleTouchStart(e) {
+            e.preventDefault();
+            draggedElement = e.currentTarget;
+            draggedElement.classList.add('dragging');
+        }
+
+        function handleTouchMove(e) {
+            e.preventDefault();
+            if (!draggedElement) return;
+            
+            const touch = e.touches[0];
+            const closest = findClosestDropZone(touch.clientX, touch.clientY);
+            
             if (nearestDropZone && nearestDropZone !== closest) {
                 nearestDropZone.classList.remove('over');
             }
@@ -997,180 +849,6 @@
             draggedElement = null;
         }
 
-        // Mouse event handlers
-        function handleDragStart(e) {
-            draggedElement = e.currentTarget;
-            e.dataTransfer.effectAllowed = 'copy';
-            e.currentTarget.style.opacity = '0.5';
-        }
-
-        function handleDragEnd(e) {
-            e.currentTarget.style.opacity = '1';
-            
-            if (nearestDropZone) {
-                const rect = nearestDropZone.getBoundingClientRect();
-                const distance = Math.sqrt(
-                    Math.pow(e.clientX - (rect.left + rect.width / 2), 2) +
-                    Math.pow(e.clientY - (rect.top + rect.height / 2), 2)
-                );
-                
-                if (distance < 150) {
-                    handleDropOnZone(nearestDropZone);
-                }
-                
-                nearestDropZone.classList.remove('over');
-                nearestDropZone = null;
-            }
-        }
-
-        function handleDrag(e) {
-            if (e.clientX === 0 && e.clientY === 0) return;
-            
-            const dropZones = document.querySelectorAll('.drop-zone:not(.filled)');
-            let closest = null;
-            let closestDistance = Infinity;
-            
-            dropZones.forEach(zone => {
-                const rect = zone.getBoundingClientRect();
-                const centerX = rect.left + rect.width / 2;
-                const centerY = rect.top + rect.height / 2;
-                const distance = Math.sqrt(
-                    Math.pow(e.clientX - centerX, 2) +
-                    Math.pow(e.clientY - centerY, 2)
-                );
-                
-                if (distance < 150 && distance < closestDistance) {
-                    closest = zone;
-                    closestDistance = distance;
-                }
-            });
-            
-            if (nearestDropZone && nearestDropZone !== closest) {
-                nearestDropZone.classList.remove('over');
-            }
-            if (closest) {
-                closest.classList.add('over');
-            }
-            nearestDropZone = closest;
-        }
-
-        function newQuestion() {
-            const questions = questionBank[currentDifficulty];
-            currentQuestion = questions[Math.floor(Math.random() * questions.length)];
-            droppedFractions = [];
-            document.getElementById('questionDisplay').textContent = currentQuestion.question;
-            document.getElementById('feedback').style.display = 'none';
-            buildEquation();
-        }
-
-        function expandSquaredUnit(unit) {
-            if (unit.includes('^')) {
-                const match = unit.match(/^(.+)\^(\d+)$/);
-                if (match) {
-                    const base = match[1];
-                    const power = parseInt(match[2]);
-                    const expanded = [];
-                    for (let i = 0; i < power; i++) {
-                        expanded.push(base);
-                    }
-                    return expanded;
-                }
-            }
-            return [unit];
-        }
-
-        function buildEquation() {
-            const equationLine = document.getElementById('equationLine');
-            equationLine.innerHTML = '';
-
-            let numeratorText = currentQuestion.start.value.toString();
-            let denominatorText = '1';
-            
-            const unitParts = currentQuestion.start.unit.split('/');
-            if (unitParts.length > 1) {
-                numeratorText = `${currentQuestion.start.value} ${unitParts[0]}`;
-                const expandedDenom = [];
-                for (let i = 1; i < unitParts.length; i++) {
-                    expandedDenom.push(...expandSquaredUnit(unitParts[i]));
-                }
-                denominatorText = expandedDenom.join(' × ');
-            } else {
-                numeratorText = `${currentQuestion.start.value} ${currentQuestion.start.unit}`;
-            }
-            
-            const startFraction = createStackedFraction(numeratorText, denominatorText);
-            equationLine.appendChild(startFraction);
-
-            const multSign = document.createElement('span');
-            multSign.textContent = ' × ';
-            equationLine.appendChild(multSign);
-
-            const dropZone1 = createDropZone(0);
-            equationLine.appendChild(dropZone1);
-
-            const equals1 = document.createElement('span');
-            equals1.id = 'firstEquals';
-            equals1.textContent = ' = ';
-            equationLine.appendChild(equals1);
-
-            const resultZone = document.createElement('span');
-            resultZone.id = 'resultZone';
-            resultZone.style.fontWeight = 'bold';
-            resultZone.style.color = '#667eea';
-            equationLine.appendChild(resultZone);
-
-            updateResult();
-        }
-
-        function createStackedFraction(numerator, denominator) {
-            const fraction = document.createElement('span');
-            fraction.className = 'stacked-fraction';
-            
-            const num = document.createElement('div');
-            num.className = 'stacked-numerator';
-            num.textContent = numerator;
-            
-            const line = document.createElement('div');
-            line.className = 'stacked-line';
-            
-            const den = document.createElement('div');
-            den.className = 'stacked-denominator';
-            den.textContent = denominator;
-            
-            fraction.appendChild(num);
-            fraction.appendChild(line);
-            fraction.appendChild(den);
-            
-            return fraction;
-        }
-
-        function createDropZone(index) {
-            const zone = document.createElement('div');
-            zone.className = 'drop-zone';
-            zone.dataset.index = index;
-            
-            zone.addEventListener('dragover', handleDragOver);
-            zone.addEventListener('dragleave', handleDragLeave);
-            zone.addEventListener('drop', handleDrop);
-            
-            return zone;
-        }
-
-        function handleDragOver(e) {
-            e.preventDefault();
-            e.currentTarget.classList.add('over');
-        }
-
-        function handleDragLeave(e) {
-            e.currentTarget.classList.remove('over');
-        }
-
-        function handleDrop(e) {
-            e.preventDefault();
-            e.currentTarget.classList.remove('over');
-            handleDropOnZone(e.currentTarget);
-        }
-
         function handleDropOnZone(dropZone) {
             if (!draggedElement) return;
             
@@ -1183,18 +861,12 @@
             dropZone.classList.add('filled');
             
             const index = parseInt(dropZone.dataset.index);
-            droppedFractions[index] = { 
-                numerator: numerator, 
-                denominator: denominator,
-                element: fraction 
-            };
+            droppedFractions[index] = { numerator, denominator, element: fraction };
             
             const removeBtn = document.createElement('button');
             removeBtn.className = 'remove-btn';
             removeBtn.textContent = '×';
-            removeBtn.onclick = () => {
-                removeDropZone(dropZone, index);
-            };
+            removeBtn.onclick = () => removeDropZone(dropZone, index);
             dropZone.appendChild(removeBtn);
             
             addNextFractionSlot();
@@ -1204,7 +876,7 @@
         function removeDropZone(dropZone, index) {
             droppedFractions[index] = null;
             
-            let prevElement = dropZone.previousElementSibling;
+            const prevElement = dropZone.previousElementSibling;
             if (prevElement && prevElement.textContent.trim() === '×') {
                 prevElement.remove();
             }
@@ -1218,20 +890,13 @@
             const equationLine = document.getElementById('equationLine');
             const allDropZones = equationLine.querySelectorAll('.drop-zone');
             
-            let emptyCount = 0;
-            let lastEmptyZone = null;
+            const emptyZones = Array.from(allDropZones).filter(zone => !zone.classList.contains('filled'));
             
-            allDropZones.forEach(zone => {
-                if (!zone.classList.contains('filled')) {
-                    emptyCount++;
-                    lastEmptyZone = zone;
-                }
-            });
-            
-            if (emptyCount > 1) {
-                allDropZones.forEach(zone => {
-                    if (!zone.classList.contains('filled') && zone !== lastEmptyZone) {
-                        let prevElement = zone.previousElementSibling;
+            if (emptyZones.length > 1) {
+                const lastEmpty = emptyZones[emptyZones.length - 1];
+                emptyZones.forEach(zone => {
+                    if (zone !== lastEmpty) {
+                        const prevElement = zone.previousElementSibling;
                         if (prevElement && prevElement.textContent.trim() === '×') {
                             prevElement.remove();
                         }
@@ -1240,56 +905,9 @@
                 });
             }
             
-            if (emptyCount === 0) {
+            if (emptyZones.length === 0) {
                 addNextFractionSlot();
             }
-        }
-
-        function createFractionStructure(numerator, denominator) {
-            const container = document.createElement('div');
-            container.className = 'fraction-container';
-            container.dataset.numerator = numerator;
-            container.dataset.denominator = denominator;
-            
-            const tooltip = document.createElement('div');
-            tooltip.className = 'flip-tooltip';
-            tooltip.textContent = 'Click to flip';
-            container.appendChild(tooltip);
-            
-            const numPart = document.createElement('div');
-            numPart.className = 'fraction-part';
-            numPart.textContent = numerator;
-            
-            const line = document.createElement('div');
-            line.className = 'fraction-line';
-            
-            const denPart = document.createElement('div');
-            denPart.className = 'fraction-part';
-            denPart.textContent = denominator;
-            
-            container.appendChild(numPart);
-            container.appendChild(line);
-            container.appendChild(denPart);
-            
-            container.onclick = (e) => {
-                e.stopPropagation();
-                const temp = container.dataset.numerator;
-                container.dataset.numerator = container.dataset.denominator;
-                container.dataset.denominator = temp;
-                numPart.textContent = container.dataset.numerator;
-                denPart.textContent = container.dataset.denominator;
-                
-                const dropZone = container.closest('.drop-zone');
-                const index = parseInt(dropZone.dataset.index);
-                if (droppedFractions[index]) {
-                    droppedFractions[index].numerator = container.dataset.numerator;
-                    droppedFractions[index].denominator = container.dataset.denominator;
-                }
-                
-                updateResult();
-            };
-            
-            return container;
         }
 
         function addNextFractionSlot() {
@@ -1297,12 +915,7 @@
             const firstEquals = document.getElementById('firstEquals');
             
             const existingSlots = document.querySelectorAll('.drop-zone');
-            let hasEmptySlot = false;
-            existingSlots.forEach(slot => {
-                if (!slot.classList.contains('filled')) {
-                    hasEmptySlot = true;
-                }
-            });
+            const hasEmptySlot = Array.from(existingSlots).some(slot => !slot.classList.contains('filled'));
             
             if (hasEmptySlot) return;
             
@@ -1313,6 +926,112 @@
             const newIndex = droppedFractions.length;
             const dropZone = createDropZone(newIndex);
             equationLine.insertBefore(dropZone, firstEquals);
+        }
+
+        // Game Logic Functions
+        function setDifficulty(difficulty) {
+            currentDifficulty = difficulty;
+            
+            document.querySelectorAll('.difficulty-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelector(`.difficulty-btn.${difficulty}`).classList.add('active');
+            
+            updateUnitsBank();
+            newQuestion();
+        }
+
+        function updateUnitsBank() {
+            const unitsBank = document.getElementById('unitsBank');
+            unitsBank.innerHTML = '';
+            
+            const categories = ['length', 'time', 'mass'];
+            if (currentDifficulty === 'medium' || currentDifficulty === 'hard') {
+                categories.push('volume');
+            }
+            
+            categories.forEach(category => {
+                const config = CATEGORY_CONFIG[category];
+                const section = document.createElement('div');
+                section.className = 'bank-section';
+                section.innerHTML = `<div class="bank-title">${config.icon} ${config.name}</div>`;
+                
+                const items = document.createElement('div');
+                items.className = 'conversion-items';
+                
+                conversionFactors[category].forEach(factor => {
+                    const pair = document.createElement('div');
+                    pair.className = 'conversion-pair';
+                    pair.draggable = true;
+                    pair.dataset.num = factor.pair[0];
+                    pair.dataset.den = factor.pair[1];
+                    pair.innerHTML = `<span>${factor.pair[0]}</span><span>=</span><span>${factor.pair[1]}</span>`;
+                    items.appendChild(pair);
+                });
+                
+                section.appendChild(items);
+                unitsBank.appendChild(section);
+            });
+            
+            setupDragEvents();
+        }
+
+        function setupDragEvents() {
+            document.querySelectorAll('.conversion-pair').forEach(draggable => {
+                draggable.addEventListener('dragstart', handleDragStart);
+                draggable.addEventListener('dragend', handleDragEnd);
+                draggable.addEventListener('drag', handleDrag);
+                draggable.addEventListener('touchstart', handleTouchStart, { passive: false });
+                draggable.addEventListener('touchmove', handleTouchMove, { passive: false });
+                draggable.addEventListener('touchend', handleTouchEnd, { passive: false });
+            });
+        }
+
+        function newQuestion() {
+            const questions = questionBank[currentDifficulty];
+            currentQuestion = questions[Math.floor(Math.random() * questions.length)];
+            droppedFractions = [];
+            
+            document.getElementById('questionDisplay').textContent = currentQuestion.question;
+            document.getElementById('feedback').style.display = 'none';
+            
+            buildEquation();
+        }
+
+        function buildEquation() {
+            const equationLine = document.getElementById('equationLine');
+            equationLine.innerHTML = '';
+
+            const unitParts = currentQuestion.start.unit.split('/');
+            let numeratorText, denominatorText;
+            
+            if (unitParts.length > 1) {
+                numeratorText = `${currentQuestion.start.value} ${unitParts[0]}`;
+                const expandedDenom = unitParts.slice(1).flatMap(expandSquaredUnit);
+                denominatorText = expandedDenom.join(' × ');
+            } else {
+                numeratorText = `${currentQuestion.start.value} ${currentQuestion.start.unit}`;
+                denominatorText = '1';
+            }
+            
+            equationLine.appendChild(createStackedFraction(numeratorText, denominatorText));
+            
+            const multSign = document.createElement('span');
+            multSign.textContent = ' × ';
+            equationLine.appendChild(multSign);
+            
+            equationLine.appendChild(createDropZone(0));
+            
+            const equals1 = document.createElement('span');
+            equals1.id = 'firstEquals';
+            equals1.textContent = ' = ';
+            equationLine.appendChild(equals1);
+            
+            const resultZone = document.createElement('span');
+            resultZone.id = 'resultZone';
+            resultZone.style.fontWeight = 'bold';
+            resultZone.style.color = '#667eea';
+            equationLine.appendChild(resultZone);
+            
+            updateResult();
         }
 
         function updateResult() {
@@ -1326,90 +1045,63 @@
                 numeratorUnits.push(...expandSquaredUnit(startUnits[0]));
             } else {
                 numeratorUnits.push(...expandSquaredUnit(startUnits[0]));
-                for (let i = 1; i < startUnits.length; i++) {
-                    denominatorUnits.push(...expandSquaredUnit(startUnits[i]));
-                }
+                startUnits.slice(1).forEach(u => denominatorUnits.push(...expandSquaredUnit(u)));
             }
             
             droppedFractions.forEach(fraction => {
-                if (fraction && fraction.numerator && fraction.denominator) {
-                    const numParts = fraction.numerator.split(' ');
-                    const numValue = parseFloat(numParts[0]);
-                    const numUnit = numParts.slice(1).join(' ');
+                if (fraction?.numerator && fraction?.denominator) {
+                    const num = parseValue(fraction.numerator);
+                    const den = parseValue(fraction.denominator);
                     
-                    const denParts = fraction.denominator.split(' ');
-                    const denValue = parseFloat(denParts[0]);
-                    const denUnit = denParts.slice(1).join(' ');
+                    numeratorNumbers.push(num.value);
+                    denominatorNumbers.push(den.value);
                     
-                    numeratorNumbers.push(numValue);
-                    denominatorNumbers.push(denValue);
-                    
-                    if (numUnit) {
-                        numeratorUnits.push(...expandSquaredUnit(numUnit));
-                    }
-                    if (denUnit) {
-                        denominatorUnits.push(...expandSquaredUnit(denUnit));
-                    }
+                    if (num.unit) numeratorUnits.push(...expandSquaredUnit(num.unit));
+                    if (den.unit) denominatorUnits.push(...expandSquaredUnit(den.unit));
                 }
             });
             
-            let cancelledNumerator = [...numeratorUnits];
-            let cancelledDenominator = [...denominatorUnits];
-            
-            for (let i = cancelledNumerator.length - 1; i >= 0; i--) {
-                const unit = cancelledNumerator[i];
-                const matchIndex = cancelledDenominator.indexOf(unit);
+            for (let i = numeratorUnits.length - 1; i >= 0; i--) {
+                const matchIndex = denominatorUnits.indexOf(numeratorUnits[i]);
                 if (matchIndex !== -1) {
-                    cancelledNumerator.splice(i, 1);
-                    cancelledDenominator.splice(matchIndex, 1);
+                    numeratorUnits.splice(i, 1);
+                    denominatorUnits.splice(matchIndex, 1);
                 }
             }
             
             const resultZone = document.getElementById('resultZone');
             resultZone.innerHTML = '';
             
-            if (numeratorNumbers.length > 0 || cancelledNumerator.length > 0 || denominatorNumbers.length > 0 || cancelledDenominator.length > 0) {
+            if (numeratorNumbers.length > 0 || numeratorUnits.length > 0 || denominatorNumbers.length > 0 || denominatorUnits.length > 0) {
                 let numeratorText = numeratorNumbers.join(' × ');
-                if (cancelledNumerator.length > 0) {
-                    numeratorText += ' × ' + cancelledNumerator.join(' × ');
+                if (numeratorUnits.length > 0) {
+                    numeratorText += (numeratorText ? ' × ' : '') + numeratorUnits.join(' × ');
                 }
                 
-                let denominatorText = '';
-                if (denominatorNumbers.length > 0) {
-                    denominatorText = denominatorNumbers.join(' × ');
-                }
-                if (cancelledDenominator.length > 0) {
-                    if (denominatorText) {
-                        denominatorText += ' × ' + cancelledDenominator.join(' × ');
-                    } else {
-                        denominatorText = cancelledDenominator.join(' × ');
-                    }
+                let denominatorText = denominatorNumbers.join(' × ');
+                if (denominatorUnits.length > 0) {
+                    denominatorText += (denominatorText ? ' × ' : '') + denominatorUnits.join(' × ');
                 }
                 
-                if (!denominatorText) {
-                    denominatorText = '1';
-                }
+                denominatorText = denominatorText || '1';
                 
-                const resultFraction = createStackedFraction(numeratorText, denominatorText);
-                resultZone.appendChild(resultFraction);
+                resultZone.appendChild(createStackedFraction(numeratorText, denominatorText));
             }
         }
 
         function checkAnswer() {
-            let allFilled = droppedFractions.filter(f => f !== null && f !== undefined).length > 0;
+            const validFractions = droppedFractions.filter(f => f?.numerator && f?.denominator);
             
-            if (!allFilled) {
+            if (validFractions.length === 0) {
                 showFeedback(false);
                 return;
             }
             
             let result = currentQuestion.start.value;
-            droppedFractions.forEach(fraction => {
-                if (fraction && fraction.numerator && fraction.denominator) {
-                    const num = parseFloat(fraction.numerator.split(' ')[0]);
-                    const den = parseFloat(fraction.denominator.split(' ')[0]);
-                    result *= (num / den);
-                }
+            validFractions.forEach(fraction => {
+                const num = parseValue(fraction.numerator);
+                const den = parseValue(fraction.denominator);
+                result *= (num.value / den.value);
             });
             
             let numeratorUnits = [];
@@ -1420,70 +1112,35 @@
                 numeratorUnits.push(...expandSquaredUnit(startUnits[0]));
             } else {
                 numeratorUnits.push(...expandSquaredUnit(startUnits[0]));
-                for (let i = 1; i < startUnits.length; i++) {
-                    denominatorUnits.push(...expandSquaredUnit(startUnits[i]));
-                }
+                startUnits.slice(1).forEach(u => denominatorUnits.push(...expandSquaredUnit(u)));
             }
             
-            droppedFractions.forEach(fraction => {
-                if (fraction && fraction.numerator && fraction.denominator) {
-                    const numUnit = fraction.numerator.split(' ').slice(1).join(' ');
-                    const denUnit = fraction.denominator.split(' ').slice(1).join(' ');
-                    
-                    if (numUnit) {
-                        numeratorUnits.push(...expandSquaredUnit(numUnit));
-                    }
-                    if (denUnit) {
-                        denominatorUnits.push(...expandSquaredUnit(denUnit));
-                    }
-                }
+            validFractions.forEach(fraction => {
+                const num = parseValue(fraction.numerator);
+                const den = parseValue(fraction.denominator);
+                
+                if (num.unit) numeratorUnits.push(...expandSquaredUnit(num.unit));
+                if (den.unit) denominatorUnits.push(...expandSquaredUnit(den.unit));
             });
             
             for (let i = numeratorUnits.length - 1; i >= 0; i--) {
-                const unit = numeratorUnits[i];
-                const matchIndex = denominatorUnits.indexOf(unit);
+                const matchIndex = denominatorUnits.indexOf(numeratorUnits[i]);
                 if (matchIndex !== -1) {
                     numeratorUnits.splice(i, 1);
                     denominatorUnits.splice(matchIndex, 1);
                 }
             }
             
-            let finalUnitNum = collapseUnits(numeratorUnits);
-            let finalUnitDen = collapseUnits(denominatorUnits);
-            let finalUnit = finalUnitNum;
-            if (finalUnitDen) {
-                finalUnit = finalUnitNum + '/' + finalUnitDen;
-            }
+            const finalUnitNum = collapseUnits(numeratorUnits);
+            const finalUnitDen = collapseUnits(denominatorUnits);
+            const finalUnit = finalUnitDen ? `${finalUnitNum}/${finalUnitDen}` : finalUnitNum;
             
             const targetCollapsed = collapseUnits(currentQuestion.target.split('/'));
-            const isCorrect = Math.abs(result - currentQuestion.answer) < 1 && 
+            const isCorrect = Math.abs(result - currentQuestion.answer) < ANSWER_TOLERANCE && 
                              finalUnit.replace(/\//g, '') === targetCollapsed.replace(/\//g, '');
             
             if (isCorrect) {
-                const resultZone = document.getElementById('resultZone');
-                
-                const equalSign = document.createElement('span');
-                equalSign.textContent = ' = ';
-                resultZone.appendChild(equalSign);
-                
-                const targetParts = currentQuestion.target.split('/');
-                let targetNum = result.toFixed(2);
-                let targetDen = '1';
-                
-                if (targetParts.length > 1) {
-                    targetNum = `${result.toFixed(2)} ${targetParts[0]}`;
-                    const expandedTargetDenom = [];
-                    for (let i = 1; i < targetParts.length; i++) {
-                        expandedTargetDenom.push(...expandSquaredUnit(targetParts[i]));
-                    }
-                    targetDen = expandedTargetDenom.join(' × ');
-                } else {
-                    targetNum = `${result.toFixed(2)} ${currentQuestion.target}`;
-                }
-                
-                const answerFraction = createStackedFraction(targetNum, targetDen);
-                resultZone.appendChild(answerFraction);
-                
+                displayFinalAnswer(result);
                 showFeedback(true);
                 launchFireworks();
             } else {
@@ -1491,21 +1148,26 @@
             }
         }
 
-        function collapseUnits(unitArray) {
-            const counts = {};
-            unitArray.forEach(unit => {
-                counts[unit] = (counts[unit] || 0) + 1;
-            });
+        function displayFinalAnswer(result) {
+            const resultZone = document.getElementById('resultZone');
             
-            const collapsed = [];
-            for (const unit in counts) {
-                if (counts[unit] > 1) {
-                    collapsed.push(`${unit}^${counts[unit]}`);
-                } else {
-                    collapsed.push(unit);
-                }
+            const equalSign = document.createElement('span');
+            equalSign.textContent = ' = ';
+            resultZone.appendChild(equalSign);
+            
+            const targetParts = currentQuestion.target.split('/');
+            let targetNum, targetDen;
+            
+            if (targetParts.length > 1) {
+                targetNum = `${result.toFixed(2)} ${targetParts[0]}`;
+                const expandedTargetDenom = targetParts.slice(1).flatMap(expandSquaredUnit);
+                targetDen = expandedTargetDenom.join(' × ');
+            } else {
+                targetNum = `${result.toFixed(2)} ${currentQuestion.target}`;
+                targetDen = '1';
             }
-            return collapsed.join('');
+            
+            resultZone.appendChild(createStackedFraction(targetNum, targetDen));
         }
 
         function showFeedback(isCorrect) {
@@ -1529,38 +1191,35 @@
             
             activeFireworks = [];
             
-            const colors = ['#FF6B6B', '#4ECDC4', '#45B7D1', '#FFA07A', '#98D8C8', '#F7DC6F'];
-            
-            for (let i = 0; i < 5; i++) {
+            for (let i = 0; i < FIREWORK_COUNT; i++) {
                 setTimeout(() => {
                     const x = Math.random() * canvas.width;
                     const y = Math.random() * canvas.height * 0.5;
-                    createFirework(ctx, x, y, colors[Math.floor(Math.random() * colors.length)]);
-                }, i * 300);
+                    const color = FIREWORK_COLORS[Math.floor(Math.random() * FIREWORK_COLORS.length)];
+                    createFirework(ctx, x, y, color);
+                }, i * FIREWORK_DELAY);
             }
         }
 
         function createFirework(ctx, x, y, color) {
             const particles = [];
-            const particleCount = 30;
             
-            for (let i = 0; i < particleCount; i++) {
-                const angle = (Math.PI * 2 * i) / particleCount;
-                const velocity = 1 + Math.random() * 1;
+            for (let i = 0; i < PARTICLE_COUNT; i++) {
+                const angle = (Math.PI * 2 * i) / PARTICLE_COUNT;
+                const velocity = 1 + Math.random();
                 particles.push({
-                    x: x,
-                    y: y,
+                    x, y,
                     vx: Math.cos(angle) * velocity,
                     vy: Math.sin(angle) * velocity,
                     opacity: 1,
-                    color: color
+                    color
                 });
             }
             
             activeFireworks.push(particles);
             
             function animate() {
-                ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
                 
                 let allDone = true;
                 
@@ -1594,16 +1253,18 @@
                 if (!allDone) {
                     requestAnimationFrame(animate);
                 } else {
-                    ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
                 }
             }
             
             animate();
         }
 
-        window.onload = () => {
+        // Initialize on page load
+        window.addEventListener('DOMContentLoaded', () => {
+            updateUnitsBank();
             newQuestion();
-        };
+        });
     </script>
 </body>
 </html>
