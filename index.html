@@ -29,47 +29,13 @@
             gap: 20px;
             padding: 20px;
             max-height: calc(100vh - 60px);
-            overflow: hidden;
-        }
-
-        .difficulty-selector {
-            display: flex;
-            gap: 10px;
-            justify-content: center;
-            flex-shrink: 0;
-        }
-
-        .top-section {
-            display: flex;
-            gap: 20px;
-            align-items: stretch;
-            flex-shrink: 0;
-        }
-
-        .question-display {
-            flex: 1;
-            min-width: 200px;
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-            color: white;
-            padding: 20px;
-            border-radius: 12px;
-            text-align: center;
-            font-size: clamp(16px, 2.5vw, 24px);
-            font-weight: bold;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .control-panel {
-            display: flex;
-            flex-shrink: 0;
+            overflow-y: auto; /* Changed: allow vertical scroll if needed */
+            overflow-x: hidden; /* Keep horizontal overflow hidden */
         }
 
         .work-area {
             background: #f8f9fa;
-            padding: 20px;
+            padding: 30px 20px 20px 20px; /* Added extra top padding */
             border-radius: 12px;
             border: 3px dashed #dee2e6;
             min-height: 100px;
@@ -77,7 +43,7 @@
             flex-direction: column;
             gap: 15px;
             flex: 1;
-            overflow: visible; /* Changed from hidden to visible */
+            overflow: visible;
         }
 
         .equation-line {
@@ -87,9 +53,8 @@
             flex-wrap: wrap;
             font-size: clamp(12px, 1.8vw, 18px);
             font-weight: 600;
-            overflow-x: auto;
-            overflow-y: visible; /* Keep y-axis visible for tooltips */
-            padding: 20px 0; /* Add padding to give space for tooltips and buttons */
+            overflow: visible; /* Changed both to visible */
+            padding: 30px 10px 10px 10px; /* Extra top padding for tooltips */
         }
 
         .drop-zone {
@@ -106,7 +71,7 @@
             transition: all 0.3s ease;
             touch-action: none;
             overflow: visible;
-            margin: 10px 5px; /* Add margin to give space around the drop zone */
+            margin: 15px 8px; /* Increased margin for more space */
         }
 
         .drop-zone.over {
@@ -146,31 +111,31 @@
 
         .flip-tooltip {
             position: absolute;
-            top: -35px; /* Moved further up */
+            top: -38px; /* Moved even further up */
             left: 50%;
             transform: translateX(-50%);
             background: #495057;
             color: white;
-            padding: 5px 10px;
+            padding: 6px 12px;
             border-radius: 6px;
-            font-size: clamp(9px, 1.4vw, 11px);
+            font-size: clamp(10px, 1.4vw, 12px);
             white-space: nowrap;
             opacity: 0;
             visibility: hidden;
             transition: opacity 0.3s, visibility 0.3s;
             pointer-events: none;
-            z-index: 1000;
+            z-index: 9999; /* Maximum z-index */
         }
 
         .flip-tooltip::after {
             content: '';
             position: absolute;
-            bottom: -4px;
+            bottom: -5px;
             left: 50%;
             transform: translateX(-50%);
-            border-left: 4px solid transparent;
-            border-right: 4px solid transparent;
-            border-top: 4px solid #495057;
+            border-left: 5px solid transparent;
+            border-right: 5px solid transparent;
+            border-top: 5px solid #495057;
         }
 
         .fraction-part {
@@ -188,21 +153,22 @@
 
         .remove-btn {
             position: absolute;
-            top: -10px; /* Moved further out */
-            right: -10px; /* Moved further out */
+            top: -12px; /* Moved even further out */
+            right: -12px; /* Moved even further out */
             background: #dc3545;
             color: white;
             border: none;
             border-radius: 50%;
-            width: 22px; /* Slightly larger */
-            height: 22px; /* Slightly larger */
+            width: 24px; /* Made bigger */
+            height: 24px; /* Made bigger */
             font-size: 14px;
+            font-weight: bold;
             cursor: pointer;
             display: none;
             align-items: center;
             justify-content: center;
-            z-index: 1000;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            z-index: 9999; /* Maximum z-index */
+            box-shadow: 0 3px 6px rgba(0,0,0,0.4);
             touch-action: manipulation;
         }
 
