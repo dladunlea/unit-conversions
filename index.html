@@ -29,13 +29,48 @@
             gap: 20px;
             padding: 20px;
             max-height: calc(100vh - 60px);
-            overflow-y: auto; /* Changed: allow vertical scroll if needed */
-            overflow-x: hidden; /* Keep horizontal overflow hidden */
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+
+        .difficulty-selector {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .top-section {
+            display: flex;
+            gap: 20px;
+            align-items: stretch;
+            flex-shrink: 0;
+        }
+
+        .question-display {
+            flex: 1;
+            min-width: 200px;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            font-size: clamp(16px, 2.5vw, 24px);
+            font-weight: bold;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .control-panel {
+            display: flex;
+            flex-shrink: 0;
         }
 
         .work-area {
             background: #f8f9fa;
-            padding: 30px 20px 20px 20px; /* Added extra top padding */
+            padding: 30px 20px 20px 20px;
             border-radius: 12px;
             border: 3px dashed #dee2e6;
             min-height: 100px;
@@ -53,8 +88,27 @@
             flex-wrap: wrap;
             font-size: clamp(12px, 1.8vw, 18px);
             font-weight: 600;
-            overflow: visible; /* Changed both to visible */
-            padding: 30px 10px 10px 10px; /* Extra top padding for tooltips */
+            overflow: visible;
+            padding: 30px 10px 10px 10px;
+        }
+
+        .stacked-fraction {
+            display: inline-flex;
+            flex-direction: column;
+            align-items: center;
+            vertical-align: middle;
+        }
+
+        .stacked-numerator, .stacked-denominator {
+            padding: 3px 6px;
+            font-size: clamp(11px, 1.6vw, 16px);
+        }
+
+        .stacked-line, .fraction-line {
+            width: 100%;
+            height: 2px;
+            background: #495057;
+            margin: 1px 0;
         }
 
         .drop-zone {
@@ -71,7 +125,7 @@
             transition: all 0.3s ease;
             touch-action: none;
             overflow: visible;
-            margin: 15px 8px; /* Increased margin for more space */
+            margin: 15px 8px;
         }
 
         .drop-zone.over {
@@ -111,7 +165,7 @@
 
         .flip-tooltip {
             position: absolute;
-            top: -38px; /* Moved even further up */
+            top: -38px;
             left: 50%;
             transform: translateX(-50%);
             background: #495057;
@@ -124,7 +178,7 @@
             visibility: hidden;
             transition: opacity 0.3s, visibility 0.3s;
             pointer-events: none;
-            z-index: 9999; /* Maximum z-index */
+            z-index: 9999;
         }
 
         .flip-tooltip::after {
@@ -153,21 +207,21 @@
 
         .remove-btn {
             position: absolute;
-            top: -12px; /* Moved even further out */
-            right: -12px; /* Moved even further out */
+            top: -12px;
+            right: -12px;
             background: #dc3545;
             color: white;
             border: none;
             border-radius: 50%;
-            width: 24px; /* Made bigger */
-            height: 24px; /* Made bigger */
+            width: 24px;
+            height: 24px;
             font-size: 14px;
             font-weight: bold;
             cursor: pointer;
             display: none;
             align-items: center;
             justify-content: center;
-            z-index: 9999; /* Maximum z-index */
+            z-index: 9999;
             box-shadow: 0 3px 6px rgba(0,0,0,0.4);
             touch-action: manipulation;
         }
@@ -176,98 +230,6 @@
         .drop-zone.filled:active .remove-btn {
             display: flex;
         }
-
-
-        .fraction-container {
-            display: inline-flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 2px;
-            padding: 6px;
-            cursor: pointer;
-            position: relative;
-            transition: transform 0.2s;
-            touch-action: manipulation;
-            z-index: 10; /* Added z-index to ensure it's above the drop-zone */
-        }
-
-        .fraction-container:hover {
-            transform: scale(1.05);
-            z-index: 20; /* Higher z-index on hover */
-        }
-
-        .fraction-container:hover .flip-tooltip {
-            opacity: 1;
-            visibility: visible;
-        }
-
-        .flip-tooltip {
-            position: absolute;
-            top: -30px;
-            background: #495057;
-            color: white;
-            padding: 5px 10px;
-            border-radius: 6px;
-            font-size: clamp(9px, 1.4vw, 11px);
-            white-space: nowrap;
-            opacity: 0;
-            visibility: hidden;
-            transition: opacity 0.3s, visibility 0.3s;
-            pointer-events: none;
-            z-index: 100; /* Very high z-index for tooltip */
-        }
-
-        .flip-tooltip::after {
-            content: '';
-            position: absolute;
-            bottom: -4px;
-            left: 50%;
-            transform: translateX(-50%);
-            border-left: 4px solid transparent;
-            border-right: 4px solid transparent;
-            border-top: 4px solid #495057;
-        }
-
-        .fraction-part {
-            min-width: 55px;
-            padding: 5px 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border-radius: 6px;
-            font-size: clamp(10px, 1.6vw, 14px);
-            font-weight: 600;
-            position: relative; /* Added for z-index context */
-            z-index: 5; /* Ensure fraction parts are above drop-zone */
-        }
-
-        .remove-btn {
-            position: absolute;
-            top: -8px;
-            right: -8px;
-            background: #dc3545;
-            color: white;
-            border: none;
-            border-radius: 50%;
-            width: 20px;
-            height: 20px;
-            font-size: 12px;
-            cursor: pointer;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            z-index: 50; /* High z-index so it appears above everything */
-            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
-            touch-action: manipulation;
-        }
-
-        .drop-zone.filled:hover .remove-btn,
-        .drop-zone.filled:active .remove-btn {
-            display: flex;
-        }
-
 
         .feedback {
             text-align: center;
@@ -420,8 +382,8 @@
         @media (max-width: 1024px) and (min-width: 768px) {
             body { padding: 25px 0; }
             .container { max-height: calc(100vh - 50px); gap: 15px; padding: 15px; }
-            .units-bank-container { grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 8px; }
-            .work-area { padding: 15px; }
+            .units-bank-container { grid-template-columns: repeat(auto-fit, minmin(160px, 1fr)); gap: 8px; }
+            .work-area { padding: 25px 15px 15px 15px; }
         }
 
         @media (max-width: 768px) {
@@ -431,18 +393,18 @@
             .control-panel { width: 100%; justify-content: stretch; }
             .btn.check-btn { width: 100%; }
             .units-bank-container { grid-template-columns: repeat(2, 1fr); gap: 8px; }
-            .work-area { padding: 12px; min-height: 90px; }
+            .work-area { padding: 25px 12px 12px 12px; min-height: 90px; }
             .difficulty-selector { gap: 8px; }
             .btn.difficulty-btn { flex: 1; padding: 10px 15px; }
-            .equation-line { gap: 6px; }
-            .drop-zone { min-width: 60px; min-height: 50px; }
+            .equation-line { gap: 6px; padding: 25px 10px 10px 10px; }
+            .drop-zone { min-width: 60px; min-height: 50px; margin: 12px 6px; }
             .fraction-part { min-width: 50px; padding: 4px 6px; }
         }
 
         @media (max-width: 900px) and (orientation: landscape) {
             body { padding: 15px 0; }
             .container { max-height: calc(100vh - 30px); gap: 8px; padding: 10px; }
-            .work-area { padding: 10px; min-height: 80px; }
+            .work-area { padding: 20px 10px 10px 10px; min-height: 80px; }
             .units-bank-container { grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); }
         }
 
@@ -450,7 +412,7 @@
             body { padding: 20px 0; }
             .container { max-height: calc(100vh - 40px); padding: 10px; gap: 10px; }
             .question-display { padding: 12px; }
-            .work-area { padding: 12px; min-height: 80px; }
+            .work-area { padding: 25px 12px 12px 12px; min-height: 80px; }
             .btn { padding: 12px 20px; }
             .btn.difficulty-btn { padding: 10px 15px; }
         }
@@ -461,10 +423,11 @@
             .btn { padding: 8px 15px; }
             .btn.difficulty-btn { padding: 8px 12px; }
             .question-display, .work-area { padding: 10px; }
-            .work-area { min-height: 70px; }
+            .work-area { min-height: 70px; padding: 20px 8px 8px 8px; }
             .bank-section { padding: 6px; }
             .conversion-pair { padding: 4px; }
             .difficulty-selector, .equation-line { gap: 5px; }
+            .equation-line { padding: 20px 5px 5px 5px; }
         }
 
         @media (max-width: 480px) {
@@ -473,10 +436,10 @@
             .units-bank-container { grid-template-columns: repeat(2, 1fr); gap: 6px; padding: 8px; }
             .bank-section { padding: 8px; }
             .conversion-pair { padding: 5px; gap: 3px; }
-            .work-area { padding: 10px; }
-            .drop-zone { min-width: 55px; min-height: 45px; padding: 4px; }
+            .work-area { padding: 25px 10px 10px 10px; }
+            .drop-zone { min-width: 55px; min-height: 45px; padding: 4px; margin: 10px 5px; }
             .fraction-part { min-width: 45px; padding: 4px 6px; }
-            .equation-line { gap: 5px; }
+            .equation-line { gap: 5px; padding: 20px 5px 5px 5px; }
         }
 
         @media (max-width: 360px) {
@@ -485,12 +448,14 @@
             .units-bank-container { grid-template-columns: 1fr 1fr; gap: 5px; padding: 6px; }
             .bank-section { padding: 6px; }
             .conversion-pair { padding: 4px; gap: 2px; }
-            .work-area { padding: 8px; }
+            .work-area { padding: 20px 8px 8px 8px; }
             .difficulty-selector { gap: 4px; }
             .btn.difficulty-btn { padding: 8px 10px; }
-            .equation-line { gap: 4px; }
+            .equation-line { gap: 4px; padding: 20px 4px 4px 4px; }
         }
     </style>
+
+
 </head>
 <body>
     <div class="container">
