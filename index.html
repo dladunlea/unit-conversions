@@ -950,14 +950,12 @@
             newQuestion();
         }
 
-        function updateUnitsBank() {
+                function updateUnitsBank() {
             const unitsBank = document.getElementById('unitsBank');
             unitsBank.innerHTML = '';
             
-            const categories = ['length', 'time', 'mass'];
-            if (currentDifficulty === 'medium' || currentDifficulty === 'hard') {
-                categories.push('volume');
-            }
+            // Show all 4 categories for all difficulty levels
+            const categories = ['length', 'time', 'mass', 'volume'];
             
             categories.forEach(category => {
                 const config = CATEGORY_CONFIG[category];
@@ -984,6 +982,7 @@
             
             setupDragEvents();
         }
+
 
         function setupDragEvents() {
             document.querySelectorAll('.conversion-pair').forEach(draggable => {
