@@ -123,18 +123,21 @@
             padding: 6px;
             transition: all 0.3s ease;
             touch-action: none;
+            overflow: visible; /* Changed from hidden to visible */
         }
 
         .drop-zone.over {
             background: #e7f5ff;
             border-color: #667eea;
             transform: scale(1.05);
+            overflow: visible; /* Ensure overflow stays visible */
         }
 
         .drop-zone.filled {
             border-style: solid;
             border-color: #667eea;
             background: #f8f9ff;
+            overflow: visible; /* Ensure overflow stays visible */
         }
 
         .fraction-container {
@@ -147,10 +150,12 @@
             position: relative;
             transition: transform 0.2s;
             touch-action: manipulation;
+            z-index: 10; /* Added z-index to ensure it's above the drop-zone */
         }
 
         .fraction-container:hover {
             transform: scale(1.05);
+            z-index: 20; /* Higher z-index on hover */
         }
 
         .fraction-container:hover .flip-tooltip {
@@ -171,7 +176,7 @@
             visibility: hidden;
             transition: opacity 0.3s, visibility 0.3s;
             pointer-events: none;
-            z-index: 10;
+            z-index: 100; /* Very high z-index for tooltip */
         }
 
         .flip-tooltip::after {
@@ -196,6 +201,8 @@
             border-radius: 6px;
             font-size: clamp(10px, 1.6vw, 14px);
             font-weight: 600;
+            position: relative; /* Added for z-index context */
+            z-index: 5; /* Ensure fraction parts are above drop-zone */
         }
 
         .remove-btn {
@@ -213,7 +220,7 @@
             display: none;
             align-items: center;
             justify-content: center;
-            z-index: 5;
+            z-index: 50; /* High z-index so it appears above everything */
             box-shadow: 0 2px 4px rgba(0,0,0,0.3);
             touch-action: manipulation;
         }
@@ -222,6 +229,7 @@
         .drop-zone.filled:active .remove-btn {
             display: flex;
         }
+
 
         .feedback {
             text-align: center;
