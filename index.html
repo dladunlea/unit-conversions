@@ -1,1280 +1,1554 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=5.0, user-scalable=yes">
-    <title>Unit Conversion Drag & Drop</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#c69253">
+<title>Distance = Rate × Time Practice</title>
+<style>
+  :root {
+    --primary: #ece6df;
+    --secondary: #dbc9b3;
+    --accent: #c69253;
+    --accent-dark: #7d5425;
+    --ink: #2f2a25;
+    --muted: #6d645b;
+    --surface: #fffdf9;
+    --border: #cdbca8;
+    --success: #2f6b45;
+    --error: #9a3d35;
+    --shadow: 0 8px 24px rgba(66, 48, 30, .09);
+    --radius: 18px;
+  }
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            padding: 30px 0;
-            overflow-x: hidden;
-        }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    color: var(--ink);
+    background:
+      radial-gradient(circle at top left, rgba(219,201,179,.42), transparent 34rem),
+      var(--primary);
+    line-height: 1.5;
+  }
 
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-            padding: 20px;
-            max-height: calc(100vh - 60px);
-            overflow-y: auto;
-            overflow-x: hidden;
-        }
+  button, input, select { font: inherit; }
+  button { cursor: pointer; }
 
-        .difficulty-selector {
-            display: flex;
-            gap: 10px;
-            justify-content: center;
-            flex-shrink: 0;
-        }
+  .app {
+    width: min(1180px, calc(100% - 28px));
+    margin: 0 auto;
+    padding: 28px 0 48px;
+  }
 
-        .top-section {
-            display: flex;
-            gap: 20px;
-            align-items: stretch;
-            flex-shrink: 0;
-        }
+  header {
+    display: flex;
+    justify-content: space-between;
+    align-items: end;
+    gap: 24px;
+    margin: 0;
+    padding: 14px 0 12px;
+  }
 
-        .question-display {
-            flex: 1;
-            min-width: 200px;
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-            color: white;
-            padding: 20px;
-            border-radius: 12px;
-            text-align: center;
-            font-size: clamp(16px, 2.5vw, 24px);
-            font-weight: bold;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
+  .sticky-top {
+    position: sticky;
+    top: 0;
+    z-index: 30;
+    margin-bottom: 20px;
+    padding: 0 0 2px;
+    background: rgba(236,230,223,.97);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(205,188,168,.55);
+  }
 
-        .control-panel {
-            display: flex;
-            flex-shrink: 0;
-        }
+  .eyebrow {
+    margin: 0 0 5px;
+    font-size: .78rem;
+    font-weight: 800;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--accent-dark);
+  }
 
-        .work-area {
-            background: #f8f9fa;
-            padding: 30px 20px 20px 20px;
-            border-radius: 12px;
-            border: 3px dashed #dee2e6;
-            min-height: 100px;
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            flex: 1;
-            overflow: visible;
-        }
+  h1 {
+    margin: 0;
+    font-size: clamp(1.75rem, 4vw, 3rem);
+    line-height: 1.08;
+    letter-spacing: -.035em;
+  }
 
-        .equation-line {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            flex-wrap: wrap;
-            font-size: clamp(12px, 1.8vw, 18px);
-            font-weight: 600;
-            overflow: visible;
-            padding: 30px 10px 10px 10px;
-        }
+  .subtitle {
+    margin: 9px 0 0;
+    color: var(--muted);
+    font-size: 1.02rem;
+  }
 
-        .stacked-fraction {
-            display: inline-flex;
-            flex-direction: column;
-            align-items: center;
-            vertical-align: middle;
-        }
+  .primary-btn {
+    border: 0;
+    border-radius: 999px;
+    background: var(--accent);
+    color: #fff;
+    font-weight: 800;
+    padding: 12px 18px;
+    min-height: 46px;
+    box-shadow: 0 4px 10px rgba(125,84,37,.18);
+    transition: transform .15s ease, filter .15s ease;
+    white-space: nowrap;
+  }
 
-        .stacked-numerator, .stacked-denominator {
-            padding: 3px 6px;
-            font-size: clamp(11px, 1.6vw, 16px);
-        }
+  .primary-btn:hover { filter: brightness(.96); transform: translateY(-1px); }
+  .primary-btn:active { transform: translateY(0); }
+  .primary-btn:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible {
+    outline: 3px solid rgba(198,146,83,.42);
+    outline-offset: 2px;
+  }
 
-        .stacked-line, .fraction-line {
-            width: 100%;
-            height: 2px;
-            background: #495057;
-            margin: 1px 0;
-        }
+  .progress {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 0;
+    padding: 0 0 13px;
+    color: var(--muted);
+    font-size: .9rem;
+    font-weight: 700;
+  }
+  .progress-bar {
+    height: 8px;
+    flex: 1;
+    background: rgba(255,255,255,.65);
+    border-radius: 99px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    width: 0%;
+    background: var(--accent);
+    transition: width .25s ease;
+  }
 
-        .drop-zone {
-            min-width: 70px;
-            min-height: 55px;
-            border: 2px dashed #adb5bd;
-            border-radius: 8px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            background: white;
-            position: relative;
-            padding: 6px;
-            transition: all 0.3s ease;
-            touch-action: none;
-            overflow: visible;
-            margin: 15px 8px;
-        }
+  .problems {
+    display: grid;
+    gap: 20px;
+  }
 
-        .drop-zone.over {
-            background: #e7f5ff;
-            border-color: #667eea;
-            transform: scale(1.05);
-        }
+  .problem {
+    background: rgba(255,253,249,.94);
+    border: 1px solid rgba(205,188,168,.9);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+  }
 
-        .drop-zone.filled {
-            border-style: solid;
-            border-color: #667eea;
-            background: #f8f9ff;
-        }
+  .problem-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 14px;
+    padding: 16px 20px;
+    background: var(--secondary);
+    border-bottom: 1px solid rgba(125,84,37,.12);
+  }
 
-        .fraction-container {
-            display: inline-flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 2px;
-            padding: 6px;
-            cursor: pointer;
-            position: relative;
-            transition: transform 0.2s;
-            touch-action: manipulation;
-            z-index: 10;
-        }
+  .problem-number {
+    font-weight: 900;
+    letter-spacing: .02em;
+  }
 
-        .fraction-container:hover {
-            transform: scale(1.05);
-            z-index: 20;
-        }
+  .status {
+    min-height: 25px;
+    font-size: .88rem;
+    font-weight: 800;
+  }
 
-        .fraction-container:hover .flip-tooltip {
-            opacity: 1;
-            visibility: visible;
-        }
+  .question {
+    padding: 22px 20px 8px;
+    font-size: clamp(1.03rem, 2vw, 1.18rem);
+    font-weight: 700;
+  }
 
-        .flip-tooltip {
-            position: absolute;
-            top: -38px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: #495057;
-            color: white;
-            padding: 6px 12px;
-            border-radius: 6px;
-            font-size: clamp(10px, 1.4vw, 12px);
-            white-space: nowrap;
-            opacity: 0;
-            visibility: hidden;
-            transition: opacity 0.3s, visibility 0.3s;
-            pointer-events: none;
-            z-index: 9999;
-        }
+  .work-area {
+    padding: 16px 20px 22px;
+    display: grid;
+    gap: 20px;
+  }
 
-        .flip-tooltip::after {
-            content: '';
-            position: absolute;
-            bottom: -5px;
-            left: 50%;
-            transform: translateX(-50%);
-            border-left: 5px solid transparent;
-            border-right: 5px solid transparent;
-            border-top: 5px solid #495057;
-        }
+  .section-title {
+    margin: 0 0 10px;
+    font-size: .92rem;
+    font-weight: 900;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: .055em;
+  }
 
-        .fraction-part {
-            min-width: 55px;
-            padding: 5px 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border-radius: 6px;
-            font-size: clamp(10px, 1.6vw, 14px);
-            font-weight: 600;
-        }
+  .choices {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 9px;
+  }
 
-        .remove-btn {
-            position: absolute;
-            top: -12px;
-            right: -12px;
-            background: #dc3545;
-            color: white;
-            border: none;
-            border-radius: 50%;
-            width: 24px;
-            height: 24px;
-            font-size: 14px;
-            font-weight: bold;
-            cursor: pointer;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            z-index: 9999;
-            box-shadow: 0 3px 6px rgba(0,0,0,0.4);
-            touch-action: manipulation;
-        }
+  .choice {
+    border: 1px solid var(--border);
+    background: #fff;
+    color: var(--ink);
+    border-radius: 12px;
+    padding: 11px 10px;
+    font-weight: 800;
+    min-height: 46px;
+    transition: .15s ease;
+  }
 
-        .drop-zone.filled:hover .remove-btn,
-        .drop-zone.filled:active .remove-btn {
-            display: flex;
-        }
+  .choice:hover { border-color: var(--accent); background: #fffaf3; }
+  .choice.selected {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+  }
 
-        .feedback {
-            text-align: center;
-            font-size: clamp(13px, 1.8vw, 18px);
-            font-weight: bold;
-            padding: 12px;
-            border-radius: 10px;
-            display: none;
-            flex-shrink: 0;
-        }
+  .equation-card {
+    background: var(--primary);
+    border: 1px solid var(--border);
+    border-radius: 15px;
+    padding: 18px;
+  }
 
-        .feedback.correct {
-            background: #d4edda;
-            color: #155724;
-            border: 2px solid #c3e6cb;
-        }
+  .equation {
+    min-height: 82px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    font-size: clamp(1.2rem, 3vw, 1.7rem);
+    font-weight: 900;
+  }
 
-        .feedback.incorrect {
-            background: #f8d7da;
-            color: #721c24;
-            border: 2px solid #f5c6cb;
-        }
+  .eq-var { min-width: 1.3em; text-align: center; }
+  .eq-equals, .eq-symbol { margin: 0 2px; }
 
-        .units-bank-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 10px;
-            padding: 10px;
-            background: #f8f9fa;
-            border-radius: 12px;
-            flex-shrink: 0;
-        }
+  .equation-answer {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    margin-left: 8px;
+  }
 
-        .bank-section {
-            background: white;
-            padding: 10px;
-            border-radius: 12px;
-            border: 2px solid #e9ecef;
-            display: flex;
-            flex-direction: column;
-        }
+  .equation-check {
+    min-height: 44px;
+    border: 1px solid var(--accent);
+    background: #fff8ed;
+    color: var(--accent-dark);
+    border-radius: 10px;
+    padding: 8px 13px;
+    font-weight: 900;
+    white-space: nowrap;
+  }
 
-        .bank-title {
-            font-size: clamp(11px, 1.6vw, 14px);
-            font-weight: bold;
-            color: #495057;
-            margin-bottom: 6px;
-            text-align: center;
-            flex-shrink: 0;
-        }
+  .equation-check:hover { background: var(--secondary); }
 
-        .conversion-items {
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
-            flex: 1;
-        }
+  .field-wrap {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
 
-        .conversion-pair {
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            padding: 6px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border-radius: 6px;
-            cursor: grab;
-            transition: transform 0.2s, box-shadow 0.2s;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-            color: white;
-            font-weight: 600;
-            font-size: clamp(10px, 1.2vw, 13px);
-            user-select: none;
-            justify-content: center;
-            touch-action: none;
-        }
+  .number-input {
+    width: 112px;
+    min-height: 46px;
+    padding: 8px 10px;
+    border: 2px solid var(--border);
+    border-radius: 10px;
+    background: #fff;
+    text-align: center;
+    font-weight: 800;
+    color: var(--ink);
+  }
 
-        .conversion-pair:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-        }
+  .number-input::placeholder {
+    color: #aaa;
+    font-weight: 600;
+    font-size: .78rem;
+  }
 
-        .conversion-pair:active {
-            cursor: grabbing;
-        }
+  .unit {
+    color: var(--accent-dark);
+    font-size: .86rem;
+    font-weight: 800;
+    white-space: nowrap;
+  }
 
-        .conversion-pair.dragging {
-            opacity: 0.5;
-        }
+  .fraction-inline {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+  }
 
-        .conversion-pair span {
-            white-space: nowrap;
-        }
+  .fraction-slash {
+    font-weight: 900;
+    font-size: 1.35em;
+  }
 
-        .btn {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            padding: 15px 25px;
-            border-radius: 10px;
-            font-size: clamp(13px, 1.8vw, 16px);
-            font-weight: bold;
-            cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-            touch-action: manipulation;
-            white-space: nowrap;
-        }
+  .unit-area {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 14px;
+    align-items: end;
+  }
 
-        .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
-        }
+  .select-label {
+    display: grid;
+    gap: 7px;
+    font-weight: 800;
+  }
 
-        .btn:active {
-            transform: translateY(0);
-        }
+  select {
+    min-height: 46px;
+    border: 2px solid var(--border);
+    border-radius: 10px;
+    background: #fff;
+    color: var(--ink);
+    padding: 8px 12px;
+    font-weight: 700;
+  }
 
-        .btn.check-btn {
-            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
-        }
+  .answer-row {
+    display: none;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
 
-        .btn.difficulty-btn {
-            background: linear-gradient(135deg, #95a5a6 0%, #7f8c8d 100%);
-            padding: 12px 20px;
-        }
+  .answer-row-old {
+    display: flex;
+    align-items: end;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
 
-        .btn.difficulty-btn.active.easy {
-            background: linear-gradient(135deg, #52c234 0%, #38a169 100%);
-        }
+  .answer-label {
+    display: grid;
+    gap: 7px;
+    font-weight: 800;
+  }
 
-        .btn.difficulty-btn.active.medium {
-            background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
-        }
+  .check-btn {
+    min-height: 46px;
+    border: 1px solid var(--accent);
+    background: #fff8ed;
+    color: var(--accent-dark);
+    border-radius: 10px;
+    padding: 9px 16px;
+    font-weight: 900;
+  }
+  .check-btn:hover { background: var(--secondary); }
 
-        .btn.difficulty-btn.active.hard {
-            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
-        }
+  .feedback {
+    min-height: 25px;
+    font-weight: 900;
+  }
+  .feedback.correct { color: var(--success); }
+  .feedback.incorrect { color: var(--error); }
 
-        .fireworks {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 9999;
-        }
+  .hidden { display: none !important; }
 
-        /* Responsive Design */
-        @media (max-width: 1024px) and (min-width: 768px) {
-            body { padding: 25px 0; }
-            .container { max-height: calc(100vh - 50px); gap: 15px; padding: 15px; }
-            .units-bank-container { grid-template-columns: repeat(auto-fit, minmin(160px, 1fr)); gap: 8px; }
-            .work-area { padding: 25px 15px 15px 15px; }
-        }
+  footer {
+    margin-top: 24px;
+    text-align: center;
+    color: var(--muted);
+    font-size: .84rem;
+  }
 
-        @media (max-width: 768px) {
-            body { padding: 25px 0; }
-            .container { max-height: calc(100vh - 50px); gap: 12px; padding: 12px; }
-            .top-section { flex-direction: column; gap: 12px; }
-            .control-panel { width: 100%; justify-content: stretch; }
-            .btn.check-btn { width: 100%; }
-            .units-bank-container { grid-template-columns: repeat(2, 1fr); gap: 8px; }
-            .work-area { padding: 25px 12px 12px 12px; min-height: 90px; }
-            .difficulty-selector { gap: 8px; }
-            .btn.difficulty-btn { flex: 1; padding: 10px 15px; }
-            .equation-line { gap: 6px; padding: 25px 10px 10px 10px; }
-            .drop-zone { min-width: 60px; min-height: 50px; margin: 12px 6px; }
-            .fraction-part { min-width: 50px; padding: 4px 6px; }
-        }
+  @media (max-width: 760px) {
+    .app { width: min(100% - 18px, 680px); padding-top: 8px; }
+    .equation { justify-content: flex-start; }
+    .answer-input { width: 88px; }
+    .equation-check { width: auto; }
+    header {
+      align-items: stretch;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .primary-btn { width: 100%; }
+    .choices { grid-template-columns: 1fr; }
+    .unit-area { grid-template-columns: 1fr; }
+    .equation-card { padding: 14px 10px; }
+    .equation { justify-content: flex-start; }
+    .number-input { width: 92px; }
+    .answer-row { align-items: stretch; flex-direction: column; }
+    .check-btn { width: 100%; }
+  }
 
-        @media (max-width: 900px) and (orientation: landscape) {
-            body { padding: 15px 0; }
-            .container { max-height: calc(100vh - 30px); gap: 8px; padding: 10px; }
-            .work-area { padding: 20px 10px 10px 10px; min-height: 80px; }
-            .units-bank-container { grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); }
-        }
-
-        @media (max-height: 700px) {
-            body { padding: 20px 0; }
-            .container { max-height: calc(100vh - 40px); padding: 10px; gap: 10px; }
-            .question-display { padding: 12px; }
-            .work-area { padding: 25px 12px 12px 12px; min-height: 80px; }
-            .btn { padding: 12px 20px; }
-            .btn.difficulty-btn { padding: 10px 15px; }
-        }
-
-        @media (max-height: 600px) and (orientation: landscape) {
-            body { padding: 10px 0; }
-            .container { max-height: calc(100vh - 20px); padding: 8px; gap: 8px; }
-            .btn { padding: 8px 15px; }
-            .btn.difficulty-btn { padding: 8px 12px; }
-            .question-display, .work-area { padding: 10px; }
-            .work-area { min-height: 70px; padding: 20px 8px 8px 8px; }
-            .bank-section { padding: 6px; }
-            .conversion-pair { padding: 4px; }
-            .difficulty-selector, .equation-line { gap: 5px; }
-            .equation-line { padding: 20px 5px 5px 5px; }
-        }
-
-        @media (max-width: 480px) {
-            body { padding: 20px 0; }
-            .container { max-height: calc(100vh - 40px); padding: 10px; gap: 10px; }
-            .units-bank-container { grid-template-columns: repeat(2, 1fr); gap: 6px; padding: 8px; }
-            .bank-section { padding: 8px; }
-            .conversion-pair { padding: 5px; gap: 3px; }
-            .work-area { padding: 25px 10px 10px 10px; }
-            .drop-zone { min-width: 55px; min-height: 45px; padding: 4px; margin: 10px 5px; }
-            .fraction-part { min-width: 45px; padding: 4px 6px; }
-            .equation-line { gap: 5px; padding: 20px 5px 5px 5px; }
-        }
-
-        @media (max-width: 360px) {
-            body { padding: 15px 0; }
-            .container { max-height: calc(100vh - 30px); padding: 8px; gap: 8px; }
-            .units-bank-container { grid-template-columns: 1fr 1fr; gap: 5px; padding: 6px; }
-            .bank-section { padding: 6px; }
-            .conversion-pair { padding: 4px; gap: 2px; }
-            .work-area { padding: 20px 8px 8px 8px; }
-            .difficulty-selector { gap: 4px; }
-            .btn.difficulty-btn { padding: 8px 10px; }
-            .equation-line { gap: 4px; padding: 20px 4px 4px 4px; }
-        }
-    </style>
-
-
+  @media (max-width: 430px) {
+    .problem-top, .question, .work-area { padding-left: 14px; padding-right: 14px; }
+    .equation { font-size: 1.15rem; gap: 5px; }
+    .number-input { width: 82px; }
+    .unit { font-size: .75rem; }
+    .fraction-inline { gap: 4px; }
+  }
+</style>
 </head>
 <body>
-    <div class="container">
-        <div class="difficulty-selector">
-            <button class="btn difficulty-btn easy active" onclick="setDifficulty('easy')">🟢 Easy</button>
-            <button class="btn difficulty-btn medium" onclick="setDifficulty('medium')">🟡 Medium</button>
-            <button class="btn difficulty-btn hard" onclick="setDifficulty('hard')">🔴 Hard</button>
-        </div>
+<main class="app">
+  <div class="sticky-top">
+    <header>
+      <div>
+        <h1>Distance = Rate × Time Practice Problems</h1>
+        <p class="subtitle"><strong>Type into the equation and solve.</strong></p>
+      </div>
+      <button class="primary-btn" id="newSetBtn" type="button">New Problem Set</button>
+    </header>
 
-        <div class="top-section">
-            <div class="question-display" id="questionDisplay">
-                Select a difficulty level to start!
-            </div>
-            <div class="control-panel">
-                <button class="btn check-btn" onclick="checkAnswer()">✓ Check Answer</button>
-            </div>
-        </div>
-
-        <div class="work-area" id="workArea">
-            <div class="equation-line" id="equationLine"></div>
-            <div class="feedback" id="feedback"></div>
-        </div>
-
-        <div class="units-bank-container" id="unitsBank"></div>
+    <div class="progress" aria-label="Problem progress">
+    <span id="progressText">0 of 5 checked</span>
+      <div class="progress-bar" aria-hidden="true"><div class="progress-fill" id="progressFill"></div></div>
     </div>
+  </div>
 
-    <canvas class="fireworks" id="fireworksCanvas"></canvas>
-    <script>
-        // Constants
-        const PROXIMITY_THRESHOLD = 150;
-        const ANSWER_TOLERANCE = 1;
-        const FIREWORK_COUNT = 5;
-        const FIREWORK_DELAY = 300;
-        const PARTICLE_COUNT = 30;
-        const FIREWORK_COLORS = ['#FF6B6B', '#4ECDC4', '#45B7D1', '#FFA07A', '#98D8C8', '#F7DC6F'];
-        
-        const CATEGORY_CONFIG = {
-            length: { icon: '📏', name: 'Length' },
-            time: { icon: '⏱️', name: 'Time' },
-            mass: { icon: '⚖️', name: 'Mass' },
-            volume: { icon: '🧪', name: 'Volume' }
-        };
+  <section class="problems" id="problems" aria-live="polite"></section>
 
-        // Question Bank - 100 questions total
-        const questionBank = {
-            easy: [
-                // Length (10)
-                { question: "Convert 5 meters into centimeters", start: { value: 5, unit: "m" }, target: "cm", answer: 500 },
-                { question: "Convert 3 kilometers into meters", start: { value: 3, unit: "km" }, target: "m", answer: 3000 },
-                { question: "Convert 24 inches into feet", start: { value: 24, unit: "in" }, target: "ft", answer: 2 },
-                { question: "Convert 2 miles into feet", start: { value: 2, unit: "mi" }, target: "ft", answer: 10560 },
-                { question: "Convert 500 centimeters into meters", start: { value: 500, unit: "cm" }, target: "m", answer: 5 },
-                { question: "Convert 7 feet into inches", start: { value: 7, unit: "ft" }, target: "in", answer: 84 },
-                { question: "Convert 2500 meters into kilometers", start: { value: 2500, unit: "m" }, target: "km", answer: 2.5 },
-                { question: "Convert 10 yards into feet", start: { value: 10, unit: "yd" }, target: "ft", answer: 30 },
-                { question: "Convert 8 kilometers into meters", start: { value: 8, unit: "km" }, target: "m", answer: 8000 },
-                { question: "Convert 36 inches into yards", start: { value: 36, unit: "in" }, target: "yd", answer: 1 },
-                
-                // Time (10)
-                { question: "Convert 2 hours into minutes", start: { value: 2, unit: "hr" }, target: "min", answer: 120 },
-                { question: "Convert 5 minutes into seconds", start: { value: 5, unit: "min" }, target: "s", answer: 300 },
-                { question: "Convert 180 seconds into minutes", start: { value: 180, unit: "s" }, target: "min", answer: 3 },
-                { question: "Convert 3 hours into seconds", start: { value: 3, unit: "hr" }, target: "s", answer: 10800 },
-                { question: "Convert 90 minutes into hours", start: { value: 90, unit: "min" }, target: "hr", answer: 1.5 },
-                { question: "Convert 7200 seconds into hours", start: { value: 7200, unit: "s" }, target: "hr", answer: 2 },
-                { question: "Convert 4 minutes into seconds", start: { value: 4, unit: "min" }, target: "s", answer: 240 },
-                { question: "Convert 1.5 hours into minutes", start: { value: 1.5, unit: "hr" }, target: "min", answer: 90 },
-                { question: "Convert 600 seconds into minutes", start: { value: 600, unit: "s" }, target: "min", answer: 10 },
-                { question: "Convert 0.5 hours into seconds", start: { value: 0.5, unit: "hr" }, target: "s", answer: 1800 },
-                
-                // Mass (10)
-                { question: "Convert 10 kilograms into grams", start: { value: 10, unit: "kg" }, target: "g", answer: 10000 },
-                { question: "Convert 5000 grams into kilograms", start: { value: 5000, unit: "g" }, target: "kg", answer: 5 },
-                { question: "Convert 3 pounds into ounces", start: { value: 3, unit: "lb" }, target: "oz", answer: 48 },
-                { question: "Convert 32 ounces into pounds", start: { value: 32, unit: "oz" }, target: "lb", answer: 2 },
-                { question: "Convert 2.5 kilograms into grams", start: { value: 2.5, unit: "kg" }, target: "g", answer: 2500 },
-                { question: "Convert 7500 grams into kilograms", start: { value: 7500, unit: "g" }, target: "kg", answer: 7.5 },
-                { question: "Convert 5 pounds into ounces", start: { value: 5, unit: "lb" }, target: "oz", answer: 80 },
-                { question: "Convert 1 kilogram into grams", start: { value: 1, unit: "kg" }, target: "g", answer: 1000 },
-                { question: "Convert 16 ounces into pounds", start: { value: 16, unit: "oz" }, target: "lb", answer: 1 },
-                { question: "Convert 250 grams into kilograms", start: { value: 250, unit: "g" }, target: "kg", answer: 0.25 },
-                
-                // Volume (5)
-                { question: "Convert 2 liters into milliliters", start: { value: 2, unit: "L" }, target: "mL", answer: 2000 },
-                { question: "Convert 5000 milliliters into liters", start: { value: 5000, unit: "mL" }, target: "L", answer: 5 },
-                { question: "Convert 4 gallons into quarts", start: { value: 4, unit: "gal" }, target: "qt", answer: 16 },
-                { question: "Convert 8 cups into pints", start: { value: 8, unit: "cup" }, target: "pt", answer: 4 },
-                { question: "Convert 3.5 liters into milliliters", start: { value: 3.5, unit: "L" }, target: "mL", answer: 3500 }
-            ],
-            
-            medium: [
-                // Speed conversions (15)
-                { question: "Convert 20 meters per second into kilometers per hour", start: { value: 20, unit: "m/s" }, target: "km/hr", answer: 72, compound: true },
-                { question: "Convert 15 meters per second into centimeters per second", start: { value: 15, unit: "m/s" }, target: "cm/s", answer: 1500, compound: true },
-                { question: "Convert 72 kilometers per hour into meters per second", start: { value: 72, unit: "km/hr" }, target: "m/s", answer: 20, compound: true },
-                { question: "Convert 30 miles per hour into feet per second", start: { value: 30, unit: "mi/hr" }, target: "ft/s", answer: 44, compound: true },
-                { question: "Convert 100 kilometers per hour into meters per second", start: { value: 100, unit: "km/hr" }, target: "m/s", answer: 27.78, compound: true },
-                { question: "Convert 50 feet per second into miles per hour", start: { value: 50, unit: "ft/s" }, target: "mi/hr", answer: 34.09, compound: true },
-                { question: "Convert 25 meters per second into kilometers per hour", start: { value: 25, unit: "m/s" }, target: "km/hr", answer: 90, compound: true },
-                { question: "Convert 60 miles per hour into feet per second", start: { value: 60, unit: "mi/hr" }, target: "ft/s", answer: 88, compound: true },
-                { question: "Convert 10 meters per second into centimeters per second", start: { value: 10, unit: "m/s" }, target: "cm/s", answer: 1000, compound: true },
-                { question: "Convert 120 kilometers per hour into meters per second", start: { value: 120, unit: "km/hr" }, target: "m/s", answer: 33.33, compound: true },
-                { question: "Convert 45 miles per hour into kilometers per hour", start: { value: 45, unit: "mi/hr" }, target: "km/hr", answer: 72.42, compound: true },
-                { question: "Convert 5 meters per second into kilometers per hour", start: { value: 5, unit: "m/s" }, target: "km/hr", answer: 18, compound: true },
-                { question: "Convert 80 kilometers per hour into miles per hour", start: { value: 80, unit: "km/hr" }, target: "mi/hr", answer: 49.71, compound: true },
-                { question: "Convert 35 meters per second into kilometers per hour", start: { value: 35, unit: "m/s" }, target: "km/hr", answer: 126, compound: true },
-                { question: "Convert 100 feet per second into meters per second", start: { value: 100, unit: "ft/s" }, target: "m/s", answer: 30.48, compound: true },
-                
-                // Area conversions (10)
-                { question: "Convert 5 square meters into square centimeters", start: { value: 5, unit: "m^2" }, target: "cm^2", answer: 50000, squared: true },
-                { question: "Convert 2 square kilometers into square meters", start: { value: 2, unit: "km^2" }, target: "m^2", answer: 2000000, squared: true },
-                { question: "Convert 3 square feet into square inches", start: { value: 3, unit: "ft^2" }, target: "in^2", answer: 432, squared: true },
-                { question: "Convert 10000 square centimeters into square meters", start: { value: 10000, unit: "cm^2" }, target: "m^2", answer: 1, squared: true },
-                { question: "Convert 1 square yard into square feet", start: { value: 1, unit: "yd^2" }, target: "ft^2", answer: 9, squared: true },
-                { question: "Convert 4 square meters into square centimeters", start: { value: 4, unit: "m^2" }, target: "cm^2", answer: 40000, squared: true },
-                { question: "Convert 144 square inches into square feet", start: { value: 144, unit: "in^2" }, target: "ft^2", answer: 1, squared: true },
-                { question: "Convert 0.5 square kilometers into square meters", start: { value: 0.5, unit: "km^2" }, target: "m^2", answer: 500000, squared: true },
-                { question: "Convert 2 square yards into square feet", start: { value: 2, unit: "yd^2" }, target: "ft^2", answer: 18, squared: true },
-                { question: "Convert 25000 square centimeters into square meters", start: { value: 25000, unit: "cm^2" }, target: "m^2", answer: 2.5, squared: true }
-            ],
-            
-            hard: [
-                // Acceleration (10)
-                { question: "Convert 10 meters per second squared into centimeters per second squared", start: { value: 10, unit: "m/s^2" }, target: "cm/s^2", answer: 1000, compound: true, squared: true },
-                { question: "Convert 50 miles per hour squared into kilometers per hour squared", start: { value: 50, unit: "mi/hr^2" }, target: "km/hr^2", answer: 80.45, compound: true, squared: true },
-                { question: "Convert 5 feet per second squared into inches per second squared", start: { value: 5, unit: "ft/s^2" }, target: "in/s^2", answer: 60, compound: true, squared: true },
-                { question: "Convert 100 centimeters per second squared into meters per second squared", start: { value: 100, unit: "cm/s^2" }, target: "m/s^2", answer: 1, compound: true, squared: true },
-                { question: "Convert 20 meters per second squared into kilometers per hour squared", start: { value: 20, unit: "m/s^2" }, target: "km/hr^2", answer: 259200, compound: true, squared: true },
-                { question: "Convert 32 feet per second squared into meters per second squared", start: { value: 32, unit: "ft/s^2" }, target: "m/s^2", answer: 9.75, compound: true, squared: true },
-                { question: "Convert 15 meters per second squared into feet per second squared", start: { value: 15, unit: "m/s^2" }, target: "ft/s^2", answer: 49.21, compound: true, squared: true },
-                { question: "Convert 25 kilometers per hour squared into meters per second squared", start: { value: 25, unit: "km/hr^2" }, target: "m/s^2", answer: 0.0019, compound: true, squared: true },
-                { question: "Convert 8 meters per second squared into centimeters per second squared", start: { value: 8, unit: "m/s^2" }, target: "cm/s^2", answer: 800, compound: true, squared: true },
-                { question: "Convert 60 miles per hour squared into feet per second squared", start: { value: 60, unit: "mi/hr^2" }, target: "ft/s^2", answer: 0.024, compound: true, squared: true },
-                
-                // Complex multi-step (30)
-                { question: "Convert 60 miles per hour into meters per second", start: { value: 60, unit: "mi/hr" }, target: "m/s", answer: 26.82, compound: true, multiStep: true },
-                { question: "Convert 100 kilometers per hour into feet per second", start: { value: 100, unit: "km/hr" }, target: "ft/s", answer: 91.13, compound: true, multiStep: true },
-                { question: "Convert 45 meters per second into miles per hour", start: { value: 45, unit: "m/s" }, target: "mi/hr", answer: 100.66, compound: true, multiStep: true },
-                { question: "Convert 30 feet per second into kilometers per hour", start: { value: 30, unit: "ft/s" }, target: "km/hr", answer: 32.92, compound: true, multiStep: true },
-                { question: "Convert 88 feet per second into kilometers per hour", start: { value: 88, unit: "ft/s" }, target: "km/hr", answer: 96.56, compound: true, multiStep: true },
-                { question: "Convert 50 meters per second into miles per hour", start: { value: 50, unit: "m/s" }, target: "mi/hr", answer: 111.85, compound: true, multiStep: true },
-                { question: "Convert 70 miles per hour into meters per second", start: { value: 70, unit: "mi/hr" }, target: "m/s", answer: 31.29, compound: true, multiStep: true },
-                { question: "Convert 25 kilometers per hour into feet per second", start: { value: 25, unit: "km/hr" }, target: "ft/s", answer: 22.78, compound: true, multiStep: true },
-                { question: "Convert 15 meters per second into miles per hour", start: { value: 15, unit: "m/s" }, target: "mi/hr", answer: 33.55, compound: true, multiStep: true },
-                { question: "Convert 55 miles per hour into kilometers per hour", start: { value: 55, unit: "mi/hr" }, target: "km/hr", answer: 88.51, compound: true, multiStep: true },
-                { question: "Convert 200 feet per second into meters per second", start: { value: 200, unit: "ft/s" }, target: "m/s", answer: 60.96, compound: true, multiStep: true },
-                { question: "Convert 90 kilometers per hour into miles per hour", start: { value: 90, unit: "km/hr" }, target: "mi/hr", answer: 55.92, compound: true, multiStep: true },
-                { question: "Convert 40 meters per second into feet per second", start: { value: 40, unit: "m/s" }, target: "ft/s", answer: 131.23, compound: true, multiStep: true },
-                { question: "Convert 65 miles per hour into meters per second", start: { value: 65, unit: "mi/hr" }, target: "m/s", answer: 29.06, compound: true, multiStep: true },
-                { question: "Convert 150 kilometers per hour into feet per second", start: { value: 150, unit: "km/hr" }, target: "ft/s", answer: 136.7, compound: true, multiStep: true },
-                { question: "Convert 35 feet per second into meters per second", start: { value: 35, unit: "ft/s" }, target: "m/s", answer: 10.67, compound: true, multiStep: true },
-                { question: "Convert 75 miles per hour into kilometers per hour", start: { value: 75, unit: "mi/hr" }, target: "km/hr", answer: 120.7, compound: true, multiStep: true },
-                { question: "Convert 12 meters per second into feet per second", start: { value: 12, unit: "m/s" }, target: "ft/s", answer: 39.37, compound: true, multiStep: true },
-                { question: "Convert 110 kilometers per hour into miles per hour", start: { value: 110, unit: "km/hr" }, target: "mi/hr", answer: 68.35, compound: true, multiStep: true },
-                { question: "Convert 80 feet per second into kilometers per hour", start: { value: 80, unit: "ft/s" }, target: "km/hr", answer: 87.78, compound: true, multiStep: true },
-                { question: "Convert 28 meters per second into miles per hour", start: { value: 28, unit: "m/s" }, target: "mi/hr", answer: 62.63, compound: true, multiStep: true },
-                { question: "Convert 95 miles per hour into meters per second", start: { value: 95, unit: "mi/hr" }, target: "m/s", answer: 42.47, compound: true, multiStep: true },
-                { question: "Convert 130 kilometers per hour into feet per second", start: { value: 130, unit: "km/hr" }, target: "ft/s", answer: 118.47, compound: true, multiStep: true },
-                { question: "Convert 22 meters per second into miles per hour", start: { value: 22, unit: "m/s" }, target: "mi/hr", answer: 49.21, compound: true, multiStep: true },
-                { question: "Convert 85 miles per hour into kilometers per hour", start: { value: 85, unit: "mi/hr" }, target: "km/hr", answer: 136.79, compound: true, multiStep: true },
-                { question: "Convert 120 feet per second into meters per second", start: { value: 120, unit: "ft/s" }, target: "m/s", answer: 36.58, compound: true, multiStep: true },
-                { question: "Convert 140 kilometers per hour into miles per hour", start: { value: 140, unit: "km/hr" }, target: "mi/hr", answer: 86.99, compound: true, multiStep: true },
-                { question: "Convert 18 meters per second into feet per second", start: { value: 18, unit: "m/s" }, target: "ft/s", answer: 59.06, compound: true, multiStep: true },
-                { question: "Convert 105 miles per hour into meters per second", start: { value: 105, unit: "mi/hr" }, target: "m/s", answer: 46.94, compound: true, multiStep: true },
-                { question: "Convert 160 kilometers per hour into feet per second", start: { value: 160, unit: "km/hr" }, target: "ft/s", answer: 145.67, compound: true, multiStep: true }
-            ]
-        };
+  <footer>Choose what you are finding, build the equation, select your units, and check your answer.</footer>
+</main>
 
-        // Conversion factors database
-        const conversionFactors = {
-            length: [
-                { pair: ["1 m", "100 cm"] },
-                { pair: ["1 km", "1000 m"] },
-                { pair: ["1 mi", "5280 ft"] },
-                { pair: ["1 mi", "1.609 km"] },
-                { pair: ["1 ft", "12 in"] },
-                { pair: ["1 yd", "3 ft"] },
-                { pair: ["1 ft", "0.3048 m"] },
-                { pair: ["1 in", "2.54 cm"] }
-            ],
-            time: [
-                { pair: ["1 min", "60 s"] },
-                { pair: ["1 hr", "60 min"] },
-                { pair: ["1 hr", "3600 s"] }
-            ],
-            mass: [
-                { pair: ["1 kg", "1000 g"] },
-                { pair: ["1 lb", "16 oz"] },
-                { pair: ["1 kg", "2.205 lb"] },
-                { pair: ["1 lb", "453.6 g"] }
-            ],
-            volume: [
-                { pair: ["1 L", "1000 mL"] },
-                { pair: ["1 gal", "4 qt"] },
-                { pair: ["1 qt", "2 pt"] },
-                { pair: ["1 pt", "2 cup"] },
-                { pair: ["1 gal", "3.785 L"] }
-            ]
-        };
+<script>
+/* ============================================================
+   QUESTION BANK
+   100 structured questions. The stored answer is used directly
+   for checking; the app does not calculate answers from text.
+   ============================================================ */
+const QUESTION_BANK = [
+  {
+    "id": 1,
+    "question": "A student walks at 20 miles per hour for 2.5 hours. How far does the student travel?",
+    "target": "d",
+    "distanceUnit": "miles",
+    "timeUnit": "hours",
+    "rateUnit": "miles per hour",
+    "answer": 50.0
+  },
+  {
+    "id": 2,
+    "question": "A runner travels 60 feet in 3 seconds. What is the runner's rate?",
+    "target": "r",
+    "distanceUnit": "feet",
+    "timeUnit": "seconds",
+    "rateUnit": "feet per second",
+    "answer": 20
+  },
+  {
+    "id": 3,
+    "question": "A student walks 6 kilometers at 3 kilometers per hour. How long does the trip take?",
+    "target": "t",
+    "distanceUnit": "kilometers",
+    "timeUnit": "hours",
+    "rateUnit": "kilometers per hour",
+    "answer": 2
+  },
+  {
+    "id": 4,
+    "question": "A cyclist rides at 6 meters per second for 2 seconds. How far does the cyclist travel?",
+    "target": "d",
+    "distanceUnit": "meters",
+    "timeUnit": "seconds",
+    "rateUnit": "meters per second",
+    "answer": 12
+  },
+  {
+    "id": 5,
+    "question": "A student travels 4 miles in 2 hours. What is the student's rate?",
+    "target": "r",
+    "distanceUnit": "miles",
+    "timeUnit": "hours",
+    "rateUnit": "miles per hour",
+    "answer": 2
+  },
+  {
+    "id": 6,
+    "question": "A cyclist travels 4 feet at 2 feet per second. How much time does the trip take?",
+    "target": "t",
+    "distanceUnit": "feet",
+    "timeUnit": "seconds",
+    "rateUnit": "feet per second",
+    "answer": 2
+  },
+  {
+    "id": 7,
+    "question": "A student walks at 5 kilometers per hour for 3 hours. How far does the student travel?",
+    "target": "d",
+    "distanceUnit": "kilometers",
+    "timeUnit": "hours",
+    "rateUnit": "kilometers per hour",
+    "answer": 15
+  },
+  {
+    "id": 8,
+    "question": "A student travels 12 meters in 4 seconds. What is the student's rate?",
+    "target": "r",
+    "distanceUnit": "meters",
+    "timeUnit": "seconds",
+    "rateUnit": "meters per second",
+    "answer": 3
+  },
+  {
+    "id": 9,
+    "question": "A runner covers 6 miles at 6 miles per hour. How much time does the run take?",
+    "target": "t",
+    "distanceUnit": "miles",
+    "timeUnit": "hours",
+    "rateUnit": "miles per hour",
+    "answer": 1
+  },
+  {
+    "id": 10,
+    "question": "A student walks at 20 feet per second for 0.5 seconds. How far does the student travel?",
+    "target": "d",
+    "distanceUnit": "feet",
+    "timeUnit": "seconds",
+    "rateUnit": "feet per second",
+    "answer": 10.0
+  },
+  {
+    "id": 11,
+    "question": "A student travels 8 kilometers in 4 hours. What is the student's rate?",
+    "target": "r",
+    "distanceUnit": "kilometers",
+    "timeUnit": "hours",
+    "rateUnit": "kilometers per hour",
+    "answer": 2
+  },
+  {
+    "id": 12,
+    "question": "A cyclist travels 3.0 meters at 2 meters per second. How much time does the trip take?",
+    "target": "t",
+    "distanceUnit": "meters",
+    "timeUnit": "seconds",
+    "rateUnit": "meters per second",
+    "answer": 1.5
+  },
+  {
+    "id": 13,
+    "question": "A car travels at 20 miles per hour for 1 hours. What distance does it cover?",
+    "target": "d",
+    "distanceUnit": "miles",
+    "timeUnit": "hours",
+    "rateUnit": "miles per hour",
+    "answer": 20
+  },
+  {
+    "id": 14,
+    "question": "A student travels 20 feet in 2 seconds. What is the student's rate?",
+    "target": "r",
+    "distanceUnit": "feet",
+    "timeUnit": "seconds",
+    "rateUnit": "feet per second",
+    "answer": 10
+  },
+  {
+    "id": 15,
+    "question": "A runner covers 4 kilometers at 2 kilometers per hour. How much time does the run take?",
+    "target": "t",
+    "distanceUnit": "kilometers",
+    "timeUnit": "hours",
+    "rateUnit": "kilometers per hour",
+    "answer": 2
+  },
+  {
+    "id": 16,
+    "question": "A car travels at 15 meters per second for 3 seconds. What distance does it cover?",
+    "target": "d",
+    "distanceUnit": "meters",
+    "timeUnit": "seconds",
+    "rateUnit": "meters per second",
+    "answer": 45
+  },
+  {
+    "id": 17,
+    "question": "A student travels 60 miles in 4 hours. What is the student's rate?",
+    "target": "r",
+    "distanceUnit": "miles",
+    "timeUnit": "hours",
+    "rateUnit": "miles per hour",
+    "answer": 15
+  },
+  {
+    "id": 18,
+    "question": "A car travels 4 feet at 4 feet per second. How long is the trip?",
+    "target": "t",
+    "distanceUnit": "feet",
+    "timeUnit": "seconds",
+    "rateUnit": "feet per second",
+    "answer": 1
+  },
+  {
+    "id": 19,
+    "question": "A car travels at 15 kilometers per hour for 2 hours. What distance does it cover?",
+    "target": "d",
+    "distanceUnit": "kilometers",
+    "timeUnit": "hours",
+    "rateUnit": "kilometers per hour",
+    "answer": 30
+  },
+  {
+    "id": 20,
+    "question": "A runner travels 18.0 meters in 1.5 seconds. What is the runner's rate?",
+    "target": "r",
+    "distanceUnit": "meters",
+    "timeUnit": "seconds",
+    "rateUnit": "meters per second",
+    "answer": 12
+  },
+  {
+    "id": 21,
+    "question": "A runner covers 60 miles at 12 miles per hour. How much time does the run take?",
+    "target": "t",
+    "distanceUnit": "miles",
+    "timeUnit": "hours",
+    "rateUnit": "miles per hour",
+    "answer": 5
+  },
+  {
+    "id": 22,
+    "question": "A student walks at 10 feet per second for 0.5 seconds. How far does the student travel?",
+    "target": "d",
+    "distanceUnit": "feet",
+    "timeUnit": "seconds",
+    "rateUnit": "feet per second",
+    "answer": 5.0
+  },
+  {
+    "id": 23,
+    "question": "A runner travels 8 kilometers in 4 hours. What is the runner's rate?",
+    "target": "r",
+    "distanceUnit": "kilometers",
+    "timeUnit": "hours",
+    "rateUnit": "kilometers per hour",
+    "answer": 2
+  },
+  {
+    "id": 24,
+    "question": "A runner covers 12 meters at 3 meters per second. How much time does the run take?",
+    "target": "t",
+    "distanceUnit": "meters",
+    "timeUnit": "seconds",
+    "rateUnit": "meters per second",
+    "answer": 4
+  },
+  {
+    "id": 25,
+    "question": "A runner moves at 20 miles per hour for 2.5 hours. How far does the runner go?",
+    "target": "d",
+    "distanceUnit": "miles",
+    "timeUnit": "hours",
+    "rateUnit": "miles per hour",
+    "answer": 50.0
+  },
+  {
+    "id": 26,
+    "question": "A runner travels 12.5 feet in 2.5 seconds. What is the runner's rate?",
+    "target": "r",
+    "distanceUnit": "feet",
+    "timeUnit": "seconds",
+    "rateUnit": "feet per second",
+    "answer": 5
+  },
+  {
+    "id": 27,
+    "question": "A cyclist travels 3.0 kilometers at 2 kilometers per hour. How much time does the trip take?",
+    "target": "t",
+    "distanceUnit": "kilometers",
+    "timeUnit": "hours",
+    "rateUnit": "kilometers per hour",
+    "answer": 1.5
+  },
+  {
+    "id": 28,
+    "question": "A student walks at 5 meters per second for 1 seconds. How far does the student travel?",
+    "target": "d",
+    "distanceUnit": "meters",
+    "timeUnit": "seconds",
+    "rateUnit": "meters per second",
+    "answer": 5
+  },
+  {
+    "id": 29,
+    "question": "A student travels 1.0 miles in 0.5 hours. What is the student's rate?",
+    "target": "r",
+    "distanceUnit": "miles",
+    "timeUnit": "hours",
+    "rateUnit": "miles per hour",
+    "answer": 2
+  },
+  {
+    "id": 30,
+    "question": "A student walks 5.0 feet at 2 feet per second. How long does the trip take?",
+    "target": "t",
+    "distanceUnit": "feet",
+    "timeUnit": "seconds",
+    "rateUnit": "feet per second",
+    "answer": 2.5
+  },
+  {
+    "id": 31,
+    "question": "A car travels at 3 kilometers per hour for 2.5 hours. What distance does it cover?",
+    "target": "d",
+    "distanceUnit": "kilometers",
+    "timeUnit": "hours",
+    "rateUnit": "kilometers per hour",
+    "answer": 7.5
+  },
+  {
+    "id": 32,
+    "question": "A car travels 15 meters in 1 seconds. What is its rate?",
+    "target": "r",
+    "distanceUnit": "meters",
+    "timeUnit": "seconds",
+    "rateUnit": "meters per second",
+    "answer": 15
+  },
+  {
+    "id": 33,
+    "question": "A car travels 15 miles at 15 miles per hour. How long is the trip?",
+    "target": "t",
+    "distanceUnit": "miles",
+    "timeUnit": "hours",
+    "rateUnit": "miles per hour",
+    "answer": 1
+  },
+  {
+    "id": 34,
+    "question": "A cyclist rides at 10 feet per second for 4 seconds. How far does the cyclist travel?",
+    "target": "d",
+    "distanceUnit": "feet",
+    "timeUnit": "seconds",
+    "rateUnit": "feet per second",
+    "answer": 40
+  },
+  {
+    "id": 35,
+    "question": "A student travels 37.5 kilometers in 2.5 hours. What is the student's rate?",
+    "target": "r",
+    "distanceUnit": "kilometers",
+    "timeUnit": "hours",
+    "rateUnit": "kilometers per hour",
+    "answer": 15
+  },
+  {
+    "id": 36,
+    "question": "A cyclist travels 18 meters at 6 meters per second. How much time does the trip take?",
+    "target": "t",
+    "distanceUnit": "meters",
+    "timeUnit": "seconds",
+    "rateUnit": "meters per second",
+    "answer": 3
+  },
+  {
+    "id": 37,
+    "question": "A cyclist rides at 3 miles per hour for 2 hours. How far does the cyclist travel?",
+    "target": "d",
+    "distanceUnit": "miles",
+    "timeUnit": "hours",
+    "rateUnit": "miles per hour",
+    "answer": 6
+  },
+  {
+    "id": 38,
+    "question": "A runner travels 7.5 feet in 0.5 seconds. What is the runner's rate?",
+    "target": "r",
+    "distanceUnit": "feet",
+    "timeUnit": "seconds",
+    "rateUnit": "feet per second",
+    "answer": 15
+  },
+  {
+    "id": 39,
+    "question": "A student walks 12 kilometers at 12 kilometers per hour. How long does the trip take?",
+    "target": "t",
+    "distanceUnit": "kilometers",
+    "timeUnit": "hours",
+    "rateUnit": "kilometers per hour",
+    "answer": 1
+  },
+  {
+    "id": 40,
+    "question": "A student walks at 4 meters per second for 3 seconds. How far does the student travel?",
+    "target": "d",
+    "distanceUnit": "meters",
+    "timeUnit": "seconds",
+    "rateUnit": "meters per second",
+    "answer": 12
+  },
+  {
+    "id": 41,
+    "question": "A runner travels 30.0 miles in 1.5 hours. What is the runner's rate?",
+    "target": "r",
+    "distanceUnit": "miles",
+    "timeUnit": "hours",
+    "rateUnit": "miles per hour",
+    "answer": 20
+  },
+  {
+    "id": 42,
+    "question": "A student walks 24 feet at 12 feet per second. How long does the trip take?",
+    "target": "t",
+    "distanceUnit": "feet",
+    "timeUnit": "seconds",
+    "rateUnit": "feet per second",
+    "answer": 2
+  },
+  {
+    "id": 43,
+    "question": "A cyclist rides at 3 kilometers per hour for 0.5 hours. How far does the cyclist travel?",
+    "target": "d",
+    "distanceUnit": "kilometers",
+    "timeUnit": "hours",
+    "rateUnit": "kilometers per hour",
+    "answer": 1.5
+  },
+  {
+    "id": 44,
+    "question": "A runner travels 50 meters in 5 seconds. What is the runner's rate?",
+    "target": "r",
+    "distanceUnit": "meters",
+    "timeUnit": "seconds",
+    "rateUnit": "meters per second",
+    "answer": 10
+  },
+  {
+    "id": 45,
+    "question": "A car travels 9 miles at 3 miles per hour. How long is the trip?",
+    "target": "t",
+    "distanceUnit": "miles",
+    "timeUnit": "hours",
+    "rateUnit": "miles per hour",
+    "answer": 3
+  },
+  {
+    "id": 46,
+    "question": "A student walks at 20 feet per second for 2.5 seconds. How far does the student travel?",
+    "target": "d",
+    "distanceUnit": "feet",
+    "timeUnit": "seconds",
+    "rateUnit": "feet per second",
+    "answer": 50.0
+  },
+  {
+    "id": 47,
+    "question": "A cyclist covers 20 kilometers in 4 hours. What is the cyclist's average rate?",
+    "target": "r",
+    "distanceUnit": "kilometers",
+    "timeUnit": "hours",
+    "rateUnit": "kilometers per hour",
+    "answer": 5
+  },
+  {
+    "id": 48,
+    "question": "A cyclist travels 50.0 meters at 20 meters per second. How much time does the trip take?",
+    "target": "t",
+    "distanceUnit": "meters",
+    "timeUnit": "seconds",
+    "rateUnit": "meters per second",
+    "answer": 2.5
+  },
+  {
+    "id": 49,
+    "question": "A runner moves at 12 miles per hour for 4 hours. How far does the runner go?",
+    "target": "d",
+    "distanceUnit": "miles",
+    "timeUnit": "hours",
+    "rateUnit": "miles per hour",
+    "answer": 48
+  },
+  {
+    "id": 50,
+    "question": "A cyclist covers 8 feet in 4 seconds. What is the cyclist's average rate?",
+    "target": "r",
+    "distanceUnit": "feet",
+    "timeUnit": "seconds",
+    "rateUnit": "feet per second",
+    "answer": 2
+  },
+  {
+    "id": 51,
+    "question": "A cyclist travels 3.0 kilometers at 2 kilometers per hour. How much time does the trip take?",
+    "target": "t",
+    "distanceUnit": "kilometers",
+    "timeUnit": "hours",
+    "rateUnit": "kilometers per hour",
+    "answer": 1.5
+  },
+  {
+    "id": 52,
+    "question": "A cyclist rides at 10 meters per second for 1.5 seconds. How far does the cyclist travel?",
+    "target": "d",
+    "distanceUnit": "meters",
+    "timeUnit": "seconds",
+    "rateUnit": "meters per second",
+    "answer": 15.0
+  },
+  {
+    "id": 53,
+    "question": "A student travels 30 miles in 5 hours. What is the student's rate?",
+    "target": "r",
+    "distanceUnit": "miles",
+    "timeUnit": "hours",
+    "rateUnit": "miles per hour",
+    "answer": 6
+  },
+  {
+    "id": 54,
+    "question": "A car travels 5.0 feet at 10 feet per second. How long is the trip?",
+    "target": "t",
+    "distanceUnit": "feet",
+    "timeUnit": "seconds",
+    "rateUnit": "feet per second",
+    "answer": 0.5
+  },
+  {
+    "id": 55,
+    "question": "A runner moves at 15 kilometers per hour for 5 hours. How far does the runner go?",
+    "target": "d",
+    "distanceUnit": "kilometers",
+    "timeUnit": "hours",
+    "rateUnit": "kilometers per hour",
+    "answer": 75
+  },
+  {
+    "id": 56,
+    "question": "A student travels 12 meters in 1 seconds. What is the student's rate?",
+    "target": "r",
+    "distanceUnit": "meters",
+    "timeUnit": "seconds",
+    "rateUnit": "meters per second",
+    "answer": 12
+  },
+  {
+    "id": 57,
+    "question": "A car travels 3 miles at 3 miles per hour. How long is the trip?",
+    "target": "t",
+    "distanceUnit": "miles",
+    "timeUnit": "hours",
+    "rateUnit": "miles per hour",
+    "answer": 1
+  },
+  {
+    "id": 58,
+    "question": "A runner moves at 2 feet per second for 0.5 seconds. How far does the runner go?",
+    "target": "d",
+    "distanceUnit": "feet",
+    "timeUnit": "seconds",
+    "rateUnit": "feet per second",
+    "answer": 1.0
+  },
+  {
+    "id": 59,
+    "question": "A car travels 30.0 kilometers in 1.5 hours. What is its rate?",
+    "target": "r",
+    "distanceUnit": "kilometers",
+    "timeUnit": "hours",
+    "rateUnit": "kilometers per hour",
+    "answer": 20
+  },
+  {
+    "id": 60,
+    "question": "A car travels 22.5 meters at 15 meters per second. How long is the trip?",
+    "target": "t",
+    "distanceUnit": "meters",
+    "timeUnit": "seconds",
+    "rateUnit": "meters per second",
+    "answer": 1.5
+  },
+  {
+    "id": 61,
+    "question": "A student walks at 8 miles per hour for 2.5 hours. How far does the student travel?",
+    "target": "d",
+    "distanceUnit": "miles",
+    "timeUnit": "hours",
+    "rateUnit": "miles per hour",
+    "answer": 20.0
+  },
+  {
+    "id": 62,
+    "question": "A runner travels 9 feet in 3 seconds. What is the runner's rate?",
+    "target": "r",
+    "distanceUnit": "feet",
+    "timeUnit": "seconds",
+    "rateUnit": "feet per second",
+    "answer": 3
+  },
+  {
+    "id": 63,
+    "question": "A runner covers 60 kilometers at 15 kilometers per hour. How much time does the run take?",
+    "target": "t",
+    "distanceUnit": "kilometers",
+    "timeUnit": "hours",
+    "rateUnit": "kilometers per hour",
+    "answer": 4
+  },
+  {
+    "id": 64,
+    "question": "A student walks at 8 meters per second for 0.5 seconds. How far does the student travel?",
+    "target": "d",
+    "distanceUnit": "meters",
+    "timeUnit": "seconds",
+    "rateUnit": "meters per second",
+    "answer": 4.0
+  },
+  {
+    "id": 65,
+    "question": "A car travels 18.0 miles in 1.5 hours. What is its rate?",
+    "target": "r",
+    "distanceUnit": "miles",
+    "timeUnit": "hours",
+    "rateUnit": "miles per hour",
+    "answer": 12
+  },
+  {
+    "id": 66,
+    "question": "A student walks 12.0 feet at 8 feet per second. How long does the trip take?",
+    "target": "t",
+    "distanceUnit": "feet",
+    "timeUnit": "seconds",
+    "rateUnit": "feet per second",
+    "answer": 1.5
+  },
+  {
+    "id": 67,
+    "question": "A runner moves at 8 kilometers per hour for 1 hours. How far does the runner go?",
+    "target": "d",
+    "distanceUnit": "kilometers",
+    "timeUnit": "hours",
+    "rateUnit": "kilometers per hour",
+    "answer": 8
+  },
+  {
+    "id": 68,
+    "question": "A runner travels 20.0 meters in 2.5 seconds. What is the runner's rate?",
+    "target": "r",
+    "distanceUnit": "meters",
+    "timeUnit": "seconds",
+    "rateUnit": "meters per second",
+    "answer": 8
+  },
+  {
+    "id": 69,
+    "question": "A car travels 4.5 miles at 3 miles per hour. How long is the trip?",
+    "target": "t",
+    "distanceUnit": "miles",
+    "timeUnit": "hours",
+    "rateUnit": "miles per hour",
+    "answer": 1.5
+  },
+  {
+    "id": 70,
+    "question": "A student walks at 10 feet per second for 1 seconds. How far does the student travel?",
+    "target": "d",
+    "distanceUnit": "feet",
+    "timeUnit": "seconds",
+    "rateUnit": "feet per second",
+    "answer": 10
+  },
+  {
+    "id": 71,
+    "question": "A car travels 3.0 kilometers in 0.5 hours. What is its rate?",
+    "target": "r",
+    "distanceUnit": "kilometers",
+    "timeUnit": "hours",
+    "rateUnit": "kilometers per hour",
+    "answer": 6
+  },
+  {
+    "id": 72,
+    "question": "A car travels 100 meters at 20 meters per second. How long is the trip?",
+    "target": "t",
+    "distanceUnit": "meters",
+    "timeUnit": "seconds",
+    "rateUnit": "meters per second",
+    "answer": 5
+  },
+  {
+    "id": 73,
+    "question": "A runner moves at 20 miles per hour for 2 hours. How far does the runner go?",
+    "target": "d",
+    "distanceUnit": "miles",
+    "timeUnit": "hours",
+    "rateUnit": "miles per hour",
+    "answer": 40
+  },
+  {
+    "id": 74,
+    "question": "A cyclist covers 48 feet in 4 seconds. What is the cyclist's average rate?",
+    "target": "r",
+    "distanceUnit": "feet",
+    "timeUnit": "seconds",
+    "rateUnit": "feet per second",
+    "answer": 12
+  },
+  {
+    "id": 75,
+    "question": "A runner covers 20 kilometers at 5 kilometers per hour. How much time does the run take?",
+    "target": "t",
+    "distanceUnit": "kilometers",
+    "timeUnit": "hours",
+    "rateUnit": "kilometers per hour",
+    "answer": 4
+  },
+  {
+    "id": 76,
+    "question": "A cyclist rides at 5 meters per second for 4 seconds. How far does the cyclist travel?",
+    "target": "d",
+    "distanceUnit": "meters",
+    "timeUnit": "seconds",
+    "rateUnit": "meters per second",
+    "answer": 20
+  },
+  {
+    "id": 77,
+    "question": "A runner travels 40 miles in 4 hours. What is the runner's rate?",
+    "target": "r",
+    "distanceUnit": "miles",
+    "timeUnit": "hours",
+    "rateUnit": "miles per hour",
+    "answer": 10
+  },
+  {
+    "id": 78,
+    "question": "A student walks 20 feet at 10 feet per second. How long does the trip take?",
+    "target": "t",
+    "distanceUnit": "feet",
+    "timeUnit": "seconds",
+    "rateUnit": "feet per second",
+    "answer": 2
+  },
+  {
+    "id": 79,
+    "question": "A car travels at 8 kilometers per hour for 1 hours. What distance does it cover?",
+    "target": "d",
+    "distanceUnit": "kilometers",
+    "timeUnit": "hours",
+    "rateUnit": "kilometers per hour",
+    "answer": 8
+  },
+  {
+    "id": 80,
+    "question": "A cyclist covers 4 meters in 1 seconds. What is the cyclist's average rate?",
+    "target": "r",
+    "distanceUnit": "meters",
+    "timeUnit": "seconds",
+    "rateUnit": "meters per second",
+    "answer": 4
+  },
+  {
+    "id": 81,
+    "question": "A cyclist travels 10 miles at 10 miles per hour. How much time does the trip take?",
+    "target": "t",
+    "distanceUnit": "miles",
+    "timeUnit": "hours",
+    "rateUnit": "miles per hour",
+    "answer": 1
+  },
+  {
+    "id": 82,
+    "question": "A student walks at 4 feet per second for 2 seconds. How far does the student travel?",
+    "target": "d",
+    "distanceUnit": "feet",
+    "timeUnit": "seconds",
+    "rateUnit": "feet per second",
+    "answer": 8
+  },
+  {
+    "id": 83,
+    "question": "A car travels 3 kilometers in 1 hours. What is its rate?",
+    "target": "r",
+    "distanceUnit": "kilometers",
+    "timeUnit": "hours",
+    "rateUnit": "kilometers per hour",
+    "answer": 3
+  },
+  {
+    "id": 84,
+    "question": "A runner covers 6.0 meters at 4 meters per second. How much time does the run take?",
+    "target": "t",
+    "distanceUnit": "meters",
+    "timeUnit": "seconds",
+    "rateUnit": "meters per second",
+    "answer": 1.5
+  },
+  {
+    "id": 85,
+    "question": "A cyclist rides at 12 miles per hour for 2 hours. How far does the cyclist travel?",
+    "target": "d",
+    "distanceUnit": "miles",
+    "timeUnit": "hours",
+    "rateUnit": "miles per hour",
+    "answer": 24
+  },
+  {
+    "id": 86,
+    "question": "A car travels 15 feet in 3 seconds. What is its rate?",
+    "target": "r",
+    "distanceUnit": "feet",
+    "timeUnit": "seconds",
+    "rateUnit": "feet per second",
+    "answer": 5
+  },
+  {
+    "id": 87,
+    "question": "A car travels 30.0 kilometers at 12 kilometers per hour. How long is the trip?",
+    "target": "t",
+    "distanceUnit": "kilometers",
+    "timeUnit": "hours",
+    "rateUnit": "kilometers per hour",
+    "answer": 2.5
+  },
+  {
+    "id": 88,
+    "question": "A car travels at 12 meters per second for 0.5 seconds. What distance does it cover?",
+    "target": "d",
+    "distanceUnit": "meters",
+    "timeUnit": "seconds",
+    "rateUnit": "meters per second",
+    "answer": 6.0
+  },
+  {
+    "id": 89,
+    "question": "A car travels 24 miles in 3 hours. What is its rate?",
+    "target": "r",
+    "distanceUnit": "miles",
+    "timeUnit": "hours",
+    "rateUnit": "miles per hour",
+    "answer": 8
+  },
+  {
+    "id": 90,
+    "question": "A runner covers 10 feet at 10 feet per second. How much time does the run take?",
+    "target": "t",
+    "distanceUnit": "feet",
+    "timeUnit": "seconds",
+    "rateUnit": "feet per second",
+    "answer": 1
+  },
+  {
+    "id": 91,
+    "question": "A car travels at 5 kilometers per hour for 0.5 hours. What distance does it cover?",
+    "target": "d",
+    "distanceUnit": "kilometers",
+    "timeUnit": "hours",
+    "rateUnit": "kilometers per hour",
+    "answer": 2.5
+  },
+  {
+    "id": 92,
+    "question": "A cyclist covers 15 meters in 1 seconds. What is the cyclist's average rate?",
+    "target": "r",
+    "distanceUnit": "meters",
+    "timeUnit": "seconds",
+    "rateUnit": "meters per second",
+    "answer": 15
+  },
+  {
+    "id": 93,
+    "question": "A cyclist travels 80 miles at 20 miles per hour. How much time does the trip take?",
+    "target": "t",
+    "distanceUnit": "miles",
+    "timeUnit": "hours",
+    "rateUnit": "miles per hour",
+    "answer": 4
+  },
+  {
+    "id": 94,
+    "question": "A student walks at 3 feet per second for 5 seconds. How far does the student travel?",
+    "target": "d",
+    "distanceUnit": "feet",
+    "timeUnit": "seconds",
+    "rateUnit": "feet per second",
+    "answer": 15
+  },
+  {
+    "id": 95,
+    "question": "A cyclist covers 9 kilometers in 3 hours. What is the cyclist's average rate?",
+    "target": "r",
+    "distanceUnit": "kilometers",
+    "timeUnit": "hours",
+    "rateUnit": "kilometers per hour",
+    "answer": 3
+  },
+  {
+    "id": 96,
+    "question": "A cyclist travels 1.5 meters at 3 meters per second. How much time does the trip take?",
+    "target": "t",
+    "distanceUnit": "meters",
+    "timeUnit": "seconds",
+    "rateUnit": "meters per second",
+    "answer": 0.5
+  },
+  {
+    "id": 97,
+    "question": "A student walks at 5 miles per hour for 3 hours. How far does the student travel?",
+    "target": "d",
+    "distanceUnit": "miles",
+    "timeUnit": "hours",
+    "rateUnit": "miles per hour",
+    "answer": 15
+  },
+  {
+    "id": 98,
+    "question": "A runner travels 18.0 feet in 1.5 seconds. What is the runner's rate?",
+    "target": "r",
+    "distanceUnit": "feet",
+    "timeUnit": "seconds",
+    "rateUnit": "feet per second",
+    "answer": 12
+  },
+  {
+    "id": 99,
+    "question": "A cyclist travels 75 kilometers at 15 kilometers per hour. How much time does the trip take?",
+    "target": "t",
+    "distanceUnit": "kilometers",
+    "timeUnit": "hours",
+    "rateUnit": "kilometers per hour",
+    "answer": 5
+  },
+  {
+    "id": 100,
+    "question": "A cyclist rides at 4 meters per second for 2 seconds. How far does the cyclist travel?",
+    "target": "d",
+    "distanceUnit": "meters",
+    "timeUnit": "seconds",
+    "rateUnit": "meters per second",
+    "answer": 8
+  }
+];
 
-        // State variables
-        let currentDifficulty = 'easy';
-        let currentQuestion = null;
-        let droppedFractions = [];
-        let draggedElement = null;
-        let activeFireworks = [];
-        let nearestDropZone = null;
-        // Utility Functions
-        function expandSquaredUnit(unit) {
-            const match = unit.match(/^(.+)\^(\d+)$/);
-            if (match) {
-                const base = match[1];
-                const power = parseInt(match[2]);
-                return Array(power).fill(base);
-            }
-            return [unit];
-        }
+const RATE_UNITS = {
+  "miles per hour": { distance: "miles", time: "hours", rate: "miles/hour" },
+  "feet per second": { distance: "feet", time: "seconds", rate: "feet/second" },
+  "kilometers per hour": { distance: "kilometers", time: "hours", rate: "kilometers/hour" },
+  "meters per second": { distance: "meters", time: "seconds", rate: "meters/second" }
+};
 
-        function collapseUnits(unitArray) {
-            const counts = {};
-            unitArray.forEach(unit => counts[unit] = (counts[unit] || 0) + 1);
-            
-            return Object.entries(counts)
-                .map(([unit, count]) => count > 1 ? `${unit}^${count}` : unit)
-                .join('');
-        }
+let currentProblems = [];
 
-        function parseValue(text) {
-            const parts = text.split(' ');
-            return {
-                value: parseFloat(parts[0]),
-                unit: parts.slice(1).join(' ')
-            };
-        }
+function shuffle(array) {
+  const copy = [...array];
+  for (let i = copy.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [copy[i], copy[j]] = [copy[j], copy[i]];
+  }
+  return copy;
+}
 
-        function findClosestDropZone(x, y) {
-            const dropZones = document.querySelectorAll('.drop-zone:not(.filled)');
-            let closest = null;
-            let closestDistance = Infinity;
-            
-            dropZones.forEach(zone => {
-                const rect = zone.getBoundingClientRect();
-                const centerX = rect.left + rect.width / 2;
-                const centerY = rect.top + rect.height / 2;
-                const distance = Math.hypot(x - centerX, y - centerY);
-                
-                if (distance < PROXIMITY_THRESHOLD && distance < closestDistance) {
-                    closest = zone;
-                    closestDistance = distance;
-                }
-            });
-            
-            return closest;
-        }
+function makeProblemState(question) {
+  return {
+    data: question,
+    selectedTarget: "",
+    selectedRateUnit: "",
+    values: { first: "", second: "" },
+    answer: "",
+    status: ""
+  };
+}
 
-        // DOM Creation Functions
-        function createStackedFraction(numerator, denominator) {
-            const fraction = document.createElement('span');
-            fraction.className = 'stacked-fraction';
-            fraction.innerHTML = `
-                <div class="stacked-numerator">${numerator}</div>
-                <div class="stacked-line"></div>
-                <div class="stacked-denominator">${denominator}</div>
-            `;
-            return fraction;
-        }
+function newProblemSet() {
+  currentProblems = shuffle(QUESTION_BANK).slice(0, 5).map(makeProblemState);
+  renderProblems();
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
 
-        function createFractionStructure(numerator, denominator) {
-            const container = document.createElement('div');
-            container.className = 'fraction-container';
-            container.dataset.numerator = numerator;
-            container.dataset.denominator = denominator;
-            
-            container.innerHTML = `
-                <div class="flip-tooltip">Click to flip</div>
-                <div class="fraction-part">${numerator}</div>
-                <div class="fraction-line"></div>
-                <div class="fraction-part">${denominator}</div>
-            `;
-            
-            container.onclick = (e) => {
-                e.stopPropagation();
-                [container.dataset.numerator, container.dataset.denominator] = 
-                    [container.dataset.denominator, container.dataset.numerator];
-                
-                const parts = container.querySelectorAll('.fraction-part');
-                parts[0].textContent = container.dataset.numerator;
-                parts[1].textContent = container.dataset.denominator;
-                
-                const dropZone = container.closest('.drop-zone');
-                const index = parseInt(dropZone.dataset.index);
-                if (droppedFractions[index]) {
-                    droppedFractions[index].numerator = container.dataset.numerator;
-                    droppedFractions[index].denominator = container.dataset.denominator;
-                }
-                
-                updateResult();
-            };
-            
-            return container;
-        }
+function targetLabel(target) {
+  return { d: "Distance", r: "Rate", t: "Time" }[target];
+}
 
-        function createDropZone(index) {
-            const zone = document.createElement('div');
-            zone.className = 'drop-zone';
-            zone.dataset.index = index;
-            
-            zone.addEventListener('dragover', (e) => {
-                e.preventDefault();
-                e.currentTarget.classList.add('over');
-            });
-            
-            zone.addEventListener('dragleave', (e) => {
-                e.currentTarget.classList.remove('over');
-            });
-            
-            zone.addEventListener('drop', (e) => {
-                e.preventDefault();
-                e.currentTarget.classList.remove('over');
-                handleDropOnZone(e.currentTarget);
-            });
-            
-            return zone;
-        }
+function renderProblems() {
+  const container = document.getElementById("problems");
+  container.innerHTML = currentProblems.map((p, index) => renderProblem(p, index)).join("");
+  attachHandlers();
+  updateProgress();
+}
 
-        // Drag and Drop Event Handlers
-        function handleDragStart(e) {
-            draggedElement = e.currentTarget;
-            e.dataTransfer.effectAllowed = 'copy';
-            e.currentTarget.style.opacity = '0.5';
-        }
+function renderProblem(p, index) {
+  const target = p.selectedTarget;
+  const unitInfo = p.selectedRateUnit ? RATE_UNITS[p.selectedRateUnit] : null;
+  const answerUnit = unitInfo
+    ? (p.selectedTarget === "d" ? unitInfo.distance :
+       p.selectedTarget === "r" ? unitInfo.rate :
+       unitInfo.time)
+    : "";
+  const fields = equationFields(p, target, unitInfo);
 
-        function handleDragEnd(e) {
-            e.currentTarget.style.opacity = '1';
-            
-            if (nearestDropZone) {
-                const rect = nearestDropZone.getBoundingClientRect();
-                const distance = Math.hypot(
-                    e.clientX - (rect.left + rect.width / 2),
-                    e.clientY - (rect.top + rect.height / 2)
-                );
-                
-                if (distance < PROXIMITY_THRESHOLD) {
-                    handleDropOnZone(nearestDropZone);
-                }
-                
-                nearestDropZone.classList.remove('over');
-                nearestDropZone = null;
-            }
-        }
+  return `
+    <article class="problem" data-index="${index}">
+      <div class="problem-top">
+        <div class="problem-number">Problem ${index + 1}</div>
+        <div class="status" aria-live="polite">${p.status === "correct" ? "✓ Correct" : p.status === "incorrect" ? "↺ Try again" : ""}</div>
+      </div>
 
-        function handleDrag(e) {
-            if (e.clientX === 0 && e.clientY === 0) return;
-            
-            const closest = findClosestDropZone(e.clientX, e.clientY);
-            
-            if (nearestDropZone && nearestDropZone !== closest) {
-                nearestDropZone.classList.remove('over');
-            }
-            if (closest) {
-                closest.classList.add('over');
-            }
-            nearestDropZone = closest;
-        }
+      <div class="question">${escapeHtml(p.data.question)}</div>
 
-        // Touch Event Handlers
-        function handleTouchStart(e) {
-            e.preventDefault();
-            draggedElement = e.currentTarget;
-            draggedElement.classList.add('dragging');
-        }
+      <div class="work-area">
+        <section>
+          <h2 class="section-title">I am trying to find...</h2>
+          <div class="choices" role="group" aria-label="Choose what you are finding">
+            ${["d","r","t"].map(v => `
+              <button type="button" class="choice ${target === v ? "selected" : ""}" data-action="target" data-value="${v}">
+                ${targetLabel(v)}
+              </button>
+            `).join("")}
+          </div>
+        </section>
 
-        function handleTouchMove(e) {
-            e.preventDefault();
-            if (!draggedElement) return;
-            
-            const touch = e.touches[0];
-            const closest = findClosestDropZone(touch.clientX, touch.clientY);
-            
-            if (nearestDropZone && nearestDropZone !== closest) {
-                nearestDropZone.classList.remove('over');
-            }
-            if (closest) {
-                closest.classList.add('over');
-            }
-            nearestDropZone = closest;
-        }
+        <section class="equation-card" aria-label="Equation">
+          <h2 class="section-title">Equation</h2>
+          <div class="equation">
+            ${target ? fields : `<span style="color:var(--muted);font-size:.95rem;font-weight:700">Choose Distance, Rate, or Time to build your equation.</span>`}
+          </div>
+        </section>
 
-        function handleTouchEnd(e) {
-            e.preventDefault();
-            
-            if (draggedElement) {
-                draggedElement.classList.remove('dragging');
-            }
-            
-            if (nearestDropZone) {
-                handleDropOnZone(nearestDropZone);
-                nearestDropZone.classList.remove('over');
-                nearestDropZone = null;
-            }
-            
-            draggedElement = null;
-        }
+        <section class="unit-area">
+          <label class="select-label">
+            My rate is measured in...
+            <select data-action="unit" aria-label="Select rate unit">
+              <option value="">Select a rate unit...</option>
+              ${Object.keys(RATE_UNITS).map(unit => `<option value="${unit}" ${p.selectedRateUnit === unit ? "selected" : ""}>${unit}</option>`).join("")}
+            </select>
+          </label>
+          ${unitInfo ? `<div class="unit" aria-live="polite">Distance: ${unitInfo.distance} · Time: ${unitInfo.time} · Rate: ${p.selectedRateUnit}</div>` : `<div class="unit" style="color:var(--muted)">Units appear after you choose a rate unit.</div>`}
+        </section>
 
-        function handleDropOnZone(dropZone) {
-            if (!draggedElement) return;
-            
-            const numerator = draggedElement.dataset.num;
-            const denominator = draggedElement.dataset.den;
-            
-            const fraction = createFractionStructure(numerator, denominator);
-            dropZone.innerHTML = '';
-            dropZone.appendChild(fraction);
-            dropZone.classList.add('filled');
-            
-            const index = parseInt(dropZone.dataset.index);
-            droppedFractions[index] = { numerator, denominator, element: fraction };
-            
-            const removeBtn = document.createElement('button');
-            removeBtn.className = 'remove-btn';
-            removeBtn.textContent = '×';
-            removeBtn.onclick = () => removeDropZone(dropZone, index);
-            dropZone.appendChild(removeBtn);
-            
-            addNextFractionSlot();
-            updateResult();
-        }
+        <div class="feedback ${p.status}" aria-live="polite">
+          ${p.status === "correct" ? "Correct!" : p.status === "incorrect" ? "Incorrect. Try again." : ""}
+        </div>
+      </div>
+    </article>
+  `;
+}
 
-        function removeDropZone(dropZone, index) {
-            droppedFractions[index] = null;
-            
-            const prevElement = dropZone.previousElementSibling;
-            if (prevElement && prevElement.textContent.trim() === '×') {
-                prevElement.remove();
-            }
-            
-            dropZone.remove();
-            cleanupDropZones();
-            updateResult();
-        }
+function inputHTML(p, key, placeholder, unit) {
+  return `<span class="field-wrap">
+    <input class="number-input equation-input" data-key="${key}" data-action="value" type="number" step="any" inputmode="decimal" placeholder="${placeholder}" value="${p.values[key]}">
+    ${unit ? `<span class="unit">${unit}</span>` : ""}
+  </span>`;
+}
 
-        function cleanupDropZones() {
-            const equationLine = document.getElementById('equationLine');
-            const allDropZones = equationLine.querySelectorAll('.drop-zone');
-            
-            const emptyZones = Array.from(allDropZones).filter(zone => !zone.classList.contains('filled'));
-            
-            if (emptyZones.length > 1) {
-                const lastEmpty = emptyZones[emptyZones.length - 1];
-                emptyZones.forEach(zone => {
-                    if (zone !== lastEmpty) {
-                        const prevElement = zone.previousElementSibling;
-                        if (prevElement && prevElement.textContent.trim() === '×') {
-                            prevElement.remove();
-                        }
-                        zone.remove();
-                    }
-                });
-            }
-            
-            if (emptyZones.length === 0) {
-                addNextFractionSlot();
-            }
-        }
+function fractionHTML(p, topKey, bottomKey, topUnit, bottomUnit, topCategory, bottomCategory) {
+  return `<span class="fraction-inline">
+    ${inputHTML(p, topKey, topCategory, topUnit)}
+    <span class="fraction-slash">/</span>
+    ${inputHTML(p, bottomKey, bottomCategory, bottomUnit)}
+  </span>`;
+}
 
-        function addNextFractionSlot() {
-            const equationLine = document.getElementById('equationLine');
-            const firstEquals = document.getElementById('firstEquals');
-            
-            const existingSlots = document.querySelectorAll('.drop-zone');
-            const hasEmptySlot = Array.from(existingSlots).some(slot => !slot.classList.contains('filled'));
-            
-            if (hasEmptySlot) return;
-            
-            const multSign = document.createElement('span');
-            multSign.textContent = ' × ';
-            equationLine.insertBefore(multSign, firstEquals);
-            
-            const newIndex = droppedFractions.length;
-            const dropZone = createDropZone(newIndex);
-            equationLine.insertBefore(dropZone, firstEquals);
-        }
+function answerHTML(p, answerUnit) {
+  return `<span class="equation-answer">
+    <span class="eq-equals">=</span>
+    <input class="number-input answer-input" data-action="answer" type="number" step="any" inputmode="decimal" placeholder="Answer" value="${p.answer}">
+    <span class="unit">${answerUnit || ""}</span>
+    <button type="button" class="equation-check" data-action="check">Check Answer</button>
+  </span>`;
+}
 
-        // Game Logic Functions
-        function setDifficulty(difficulty) {
-            currentDifficulty = difficulty;
-            
-            document.querySelectorAll('.difficulty-btn').forEach(btn => btn.classList.remove('active'));
-            document.querySelector(`.difficulty-btn.${difficulty}`).classList.add('active');
-            
-            updateUnitsBank();
-            newQuestion();
-        }
+function equationFields(p, target, unitInfo) {
+  const u = unitInfo;
+  // Units stay hidden until a rate unit is selected. Once selected, every
+  // equation field gets its matching unit immediately beside the field.
+  if (!u) {
+    return `<span style="color:var(--muted);font-size:.95rem;font-weight:700">Choose a rate unit to show the units and finish the equation.</span>`;
+  }
 
-                function updateUnitsBank() {
-            const unitsBank = document.getElementById('unitsBank');
-            unitsBank.innerHTML = '';
-            
-            // Show all 4 categories for all difficulty levels
-            const categories = ['length', 'time', 'mass', 'volume'];
-            
-            categories.forEach(category => {
-                const config = CATEGORY_CONFIG[category];
-                const section = document.createElement('div');
-                section.className = 'bank-section';
-                section.innerHTML = `<div class="bank-title">${config.icon} ${config.name}</div>`;
-                
-                const items = document.createElement('div');
-                items.className = 'conversion-items';
-                
-                conversionFactors[category].forEach(factor => {
-                    const pair = document.createElement('div');
-                    pair.className = 'conversion-pair';
-                    pair.draggable = true;
-                    pair.dataset.num = factor.pair[0];
-                    pair.dataset.den = factor.pair[1];
-                    pair.innerHTML = `<span>${factor.pair[0]}</span><span>=</span><span>${factor.pair[1]}</span>`;
-                    items.appendChild(pair);
-                });
-                
-                section.appendChild(items);
-                unitsBank.appendChild(section);
-            });
-            
-            setupDragEvents();
-        }
+  if (target === "d") {
+    return `
+      <span class="eq-var">d</span><span class="eq-equals">=</span>
+      ${inputHTML(p, "first", "Rate", p.selectedRateUnit)}
+      <span class="eq-symbol">×</span>
+      ${inputHTML(p, "second", "Time", u.time)}
+      ${answerHTML(p, u.distance)}
+    `;
+  }
+  if (target === "r") {
+    return `
+      <span class="eq-var">r</span><span class="eq-equals">=</span>
+      ${fractionHTML(p, "first", "second", u.distance, u.time, "Distance", "Time")}
+      ${answerHTML(p, p.selectedRateUnit)}
+    `;
+  }
+  return `
+    <span class="eq-var">t</span><span class="eq-equals">=</span>
+    ${fractionHTML(p, "first", "second", u.distance, u.rate, "Distance", "Rate")}
+    ${answerHTML(p, u.time)}
+  `;
+}
 
+function attachHandlers() {
+  document.querySelectorAll(".problem").forEach(card => {
+    const index = Number(card.dataset.index);
+    const p = currentProblems[index];
 
-        function setupDragEvents() {
-            document.querySelectorAll('.conversion-pair').forEach(draggable => {
-                draggable.addEventListener('dragstart', handleDragStart);
-                draggable.addEventListener('dragend', handleDragEnd);
-                draggable.addEventListener('drag', handleDrag);
-                draggable.addEventListener('touchstart', handleTouchStart, { passive: false });
-                draggable.addEventListener('touchmove', handleTouchMove, { passive: false });
-                draggable.addEventListener('touchend', handleTouchEnd, { passive: false });
-            });
-        }
+    card.querySelectorAll('[data-action="target"]').forEach(button => {
+      button.addEventListener("click", () => {
+        p.selectedTarget = button.dataset.value;
+        p.values = { first: "", second: "" };
+        p.answer = "";
+        p.status = "";
+        renderProblems();
+      });
+    });
 
-        function newQuestion() {
-            const questions = questionBank[currentDifficulty];
-            currentQuestion = questions[Math.floor(Math.random() * questions.length)];
-            droppedFractions = [];
-            
-            document.getElementById('questionDisplay').textContent = currentQuestion.question;
-            document.getElementById('feedback').style.display = 'none';
-            
-            buildEquation();
-        }
+    const unitSelect = card.querySelector('[data-action="unit"]');
+    unitSelect.addEventListener("change", event => {
+      p.selectedRateUnit = event.target.value;
+      p.status = "";
+      renderProblems();
+    });
 
-        function buildEquation() {
-            const equationLine = document.getElementById('equationLine');
-            equationLine.innerHTML = '';
+    card.querySelectorAll('[data-action="value"]').forEach(input => {
+      input.addEventListener("input", event => {
+        p.values[input.dataset.key] = event.target.value;
+        p.status = "";
+      });
+    });
 
-            const unitParts = currentQuestion.start.unit.split('/');
-            let numeratorText, denominatorText;
-            
-            if (unitParts.length > 1) {
-                numeratorText = `${currentQuestion.start.value} ${unitParts[0]}`;
-                const expandedDenom = unitParts.slice(1).flatMap(expandSquaredUnit);
-                denominatorText = expandedDenom.join(' × ');
-            } else {
-                numeratorText = `${currentQuestion.start.value} ${currentQuestion.start.unit}`;
-                denominatorText = '1';
-            }
-            
-            equationLine.appendChild(createStackedFraction(numeratorText, denominatorText));
-            
-            const multSign = document.createElement('span');
-            multSign.textContent = ' × ';
-            equationLine.appendChild(multSign);
-            
-            equationLine.appendChild(createDropZone(0));
-            
-            const equals1 = document.createElement('span');
-            equals1.id = 'firstEquals';
-            equals1.textContent = ' = ';
-            equationLine.appendChild(equals1);
-            
-            const resultZone = document.createElement('span');
-            resultZone.id = 'resultZone';
-            resultZone.style.fontWeight = 'bold';
-            resultZone.style.color = '#667eea';
-            equationLine.appendChild(resultZone);
-            
-            updateResult();
-        }
+    const answerInput = card.querySelector('[data-action="answer"]');
+    if (answerInput) {
+      answerInput.addEventListener("input", event => {
+        p.answer = event.target.value;
+        p.status = "";
+        const feedback = card.querySelector(".feedback");
+        feedback.textContent = "";
+        feedback.className = "feedback";
+        card.querySelector(".status").textContent = "";
+        updateProgress();
+      });
+    }
 
-        function updateResult() {
-            let numeratorNumbers = [currentQuestion.start.value];
-            let denominatorNumbers = [];
-            let numeratorUnits = [];
-            let denominatorUnits = [];
-            
-            const startUnits = currentQuestion.start.unit.split('/');
-            if (startUnits.length === 1) {
-                numeratorUnits.push(...expandSquaredUnit(startUnits[0]));
-            } else {
-                numeratorUnits.push(...expandSquaredUnit(startUnits[0]));
-                startUnits.slice(1).forEach(u => denominatorUnits.push(...expandSquaredUnit(u)));
-            }
-            
-            droppedFractions.forEach(fraction => {
-                if (fraction?.numerator && fraction?.denominator) {
-                    const num = parseValue(fraction.numerator);
-                    const den = parseValue(fraction.denominator);
-                    
-                    numeratorNumbers.push(num.value);
-                    denominatorNumbers.push(den.value);
-                    
-                    if (num.unit) numeratorUnits.push(...expandSquaredUnit(num.unit));
-                    if (den.unit) denominatorUnits.push(...expandSquaredUnit(den.unit));
-                }
-            });
-            
-            for (let i = numeratorUnits.length - 1; i >= 0; i--) {
-                const matchIndex = denominatorUnits.indexOf(numeratorUnits[i]);
-                if (matchIndex !== -1) {
-                    numeratorUnits.splice(i, 1);
-                    denominatorUnits.splice(matchIndex, 1);
-                }
-            }
-            
-            const resultZone = document.getElementById('resultZone');
-            resultZone.innerHTML = '';
-            
-            if (numeratorNumbers.length > 0 || numeratorUnits.length > 0 || denominatorNumbers.length > 0 || denominatorUnits.length > 0) {
-                let numeratorText = numeratorNumbers.join(' × ');
-                if (numeratorUnits.length > 0) {
-                    numeratorText += (numeratorText ? ' × ' : '') + numeratorUnits.join(' × ');
-                }
-                
-                let denominatorText = denominatorNumbers.join(' × ');
-                if (denominatorUnits.length > 0) {
-                    denominatorText += (denominatorText ? ' × ' : '') + denominatorUnits.join(' × ');
-                }
-                
-                denominatorText = denominatorText || '1';
-                
-                resultZone.appendChild(createStackedFraction(numeratorText, denominatorText));
-            }
-        }
+    const checkButton = card.querySelector('[data-action="check"]');
+    if (checkButton) checkButton.addEventListener("click", () => {
+      const student = Number(p.answer);
+      const correct = Number(p.data.answer);
+      const tolerance = Math.max(0.000001, Math.abs(correct) * 0.0001);
 
-        function checkAnswer() {
-            const validFractions = droppedFractions.filter(f => f?.numerator && f?.denominator);
-            
-            if (validFractions.length === 0) {
-                showFeedback(false);
-                return;
-            }
-            
-            let result = currentQuestion.start.value;
-            validFractions.forEach(fraction => {
-                const num = parseValue(fraction.numerator);
-                const den = parseValue(fraction.denominator);
-                result *= (num.value / den.value);
-            });
-            
-            let numeratorUnits = [];
-            let denominatorUnits = [];
-            
-            const startUnits = currentQuestion.start.unit.split('/');
-            if (startUnits.length === 1) {
-                numeratorUnits.push(...expandSquaredUnit(startUnits[0]));
-            } else {
-                numeratorUnits.push(...expandSquaredUnit(startUnits[0]));
-                startUnits.slice(1).forEach(u => denominatorUnits.push(...expandSquaredUnit(u)));
-            }
-            
-            validFractions.forEach(fraction => {
-                const num = parseValue(fraction.numerator);
-                const den = parseValue(fraction.denominator);
-                
-                if (num.unit) numeratorUnits.push(...expandSquaredUnit(num.unit));
-                if (den.unit) denominatorUnits.push(...expandSquaredUnit(den.unit));
-            });
-            
-            for (let i = numeratorUnits.length - 1; i >= 0; i--) {
-                const matchIndex = denominatorUnits.indexOf(numeratorUnits[i]);
-                if (matchIndex !== -1) {
-                    numeratorUnits.splice(i, 1);
-                    denominatorUnits.splice(matchIndex, 1);
-                }
-            }
-            
-            const finalUnitNum = collapseUnits(numeratorUnits);
-            const finalUnitDen = collapseUnits(denominatorUnits);
-            const finalUnit = finalUnitDen ? `${finalUnitNum}/${finalUnitDen}` : finalUnitNum;
-            
-            const targetCollapsed = collapseUnits(currentQuestion.target.split('/'));
-            const isCorrect = Math.abs(result - currentQuestion.answer) < ANSWER_TOLERANCE && 
-                             finalUnit.replace(/\//g, '') === targetCollapsed.replace(/\//g, '');
-            
-            if (isCorrect) {
-                displayFinalAnswer(result);
-                showFeedback(true);
-                launchFireworks();
-            } else {
-                showFeedback(false);
-            }
-        }
+      if (p.answer.trim() !== "" && Number.isFinite(student) && Math.abs(student - correct) <= tolerance) {
+        p.status = "correct";
+      } else {
+        p.status = "incorrect";
+      }
+      renderProblems();
+    });
+  });
+}
 
-        function displayFinalAnswer(result) {
-            const resultZone = document.getElementById('resultZone');
-            
-            const equalSign = document.createElement('span');
-            equalSign.textContent = ' = ';
-            resultZone.appendChild(equalSign);
-            
-            const targetParts = currentQuestion.target.split('/');
-            let targetNum, targetDen;
-            
-            if (targetParts.length > 1) {
-                targetNum = `${result.toFixed(2)} ${targetParts[0]}`;
-                const expandedTargetDenom = targetParts.slice(1).flatMap(expandSquaredUnit);
-                targetDen = expandedTargetDenom.join(' × ');
-            } else {
-                targetNum = `${result.toFixed(2)} ${currentQuestion.target}`;
-                targetDen = '1';
-            }
-            
-            resultZone.appendChild(createStackedFraction(targetNum, targetDen));
-        }
+function updateProgress() {
+  const checked = currentProblems.filter(p => p.status === "correct").length;
+  document.getElementById("progressText").textContent = `${checked} of 5 checked`;
+  document.getElementById("progressFill").style.width = `${checked / 5 * 100}%`;
+}
 
-        function showFeedback(isCorrect) {
-            const feedback = document.getElementById('feedback');
-            feedback.style.display = 'block';
-            
-            if (isCorrect) {
-                feedback.className = 'feedback correct';
-                feedback.textContent = '🎉 Correct! Great job!';
-            } else {
-                feedback.className = 'feedback incorrect';
-                feedback.textContent = '❌ Try again! Check your conversion factors.';
-            }
-        }
+function escapeHtml(value) {
+  return value.replace(/[&<>"']/g, char => ({
+    "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#039;"
+  })[char]);
+}
 
-        function launchFireworks() {
-            const canvas = document.getElementById('fireworksCanvas');
-            const ctx = canvas.getContext('2d');
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-            
-            activeFireworks = [];
-            
-            for (let i = 0; i < FIREWORK_COUNT; i++) {
-                setTimeout(() => {
-                    const x = Math.random() * canvas.width;
-                    const y = Math.random() * canvas.height * 0.5;
-                    const color = FIREWORK_COLORS[Math.floor(Math.random() * FIREWORK_COLORS.length)];
-                    createFirework(ctx, x, y, color);
-                }, i * FIREWORK_DELAY);
-            }
-        }
-
-        function createFirework(ctx, x, y, color) {
-            const particles = [];
-            
-            for (let i = 0; i < PARTICLE_COUNT; i++) {
-                const angle = (Math.PI * 2 * i) / PARTICLE_COUNT;
-                const velocity = 1 + Math.random();
-                particles.push({
-                    x, y,
-                    vx: Math.cos(angle) * velocity,
-                    vy: Math.sin(angle) * velocity,
-                    opacity: 1,
-                    color
-                });
-            }
-            
-            activeFireworks.push(particles);
-            
-            function animate() {
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-                
-                let allDone = true;
-                
-                activeFireworks.forEach((firework, fIndex) => {
-                    let fireworkDone = true;
-                    
-                    firework.forEach(particle => {
-                        if (particle.opacity > 0) {
-                            fireworkDone = false;
-                            allDone = false;
-                            
-                            ctx.beginPath();
-                            ctx.arc(particle.x, particle.y, 3, 0, Math.PI * 2);
-                            ctx.fillStyle = particle.color;
-                            ctx.globalAlpha = particle.opacity;
-                            ctx.fill();
-                            
-                            particle.x += particle.vx * 1.5;
-                            particle.y += particle.vy * 1.5;
-                            particle.opacity -= 0.008;
-                        }
-                    });
-                    
-                    if (fireworkDone) {
-                        activeFireworks.splice(fIndex, 1);
-                    }
-                });
-                
-                ctx.globalAlpha = 1;
-                
-                if (!allDone) {
-                    requestAnimationFrame(animate);
-                } else {
-                    ctx.clearRect(0, 0, canvas.width, canvas.height);
-                }
-            }
-            
-            animate();
-        }
-
-        // Initialize on page load
-        window.addEventListener('DOMContentLoaded', () => {
-            updateUnitsBank();
-            newQuestion();
-        });
-    </script>
+document.getElementById("newSetBtn").addEventListener("click", newProblemSet);
+newProblemSet();
+</script>
 </body>
 </html>
